@@ -1,0 +1,50 @@
+services:
+
+  parking-management-service-db:
+    image: postgres:17.4-alpine
+    container_name: parking-management-service-db
+    restart: on-failure
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5433:${DB_PORT}"
+    networks:
+      - app-net
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  parking-management-service:
+    image: parking-management-service:0.0.1
+    container_name: parking-management-service
+    restart: no
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_NAME: ${DB_NAME}
+      DB_SERVER: ${DB_SERVER}
+      DB_PORT: ${DB_PORT}
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8081:8080"
+    networks:
+      - app-net
+    depends_on:
+      user-transfer-service-db:
+        condition: service_healthy
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  pgdata:
