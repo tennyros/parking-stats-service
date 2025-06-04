@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:${DB_BASE:postgresql}://${DB_SERVER:localhost}:${DB_PORT:5433}/${DB_NAME:parking_management_service_app}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:root}
