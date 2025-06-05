@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record CarExitRequest(
 
-    @NotBlank String licensePlate
+    @NotBlank(message = "License plate cannot be empty")
+    String licensePlate
 
 ) {}
