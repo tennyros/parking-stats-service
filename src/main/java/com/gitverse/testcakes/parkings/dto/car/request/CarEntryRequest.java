@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Pattern;
  * @param type The type of the vehicle
  */
 public record CarEntryRequest(
+
         @NotBlank(message = "License plate cannot be empty")
         @Pattern(
         regexp = LicensePlatePatterns.RUSSIAN_LICENSE_PLATE,
