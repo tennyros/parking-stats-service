@@ -4,6 +4,7 @@ import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,7 +40,7 @@ public class ParkingSpot {
     @Enumerated(EnumType.STRING)
     private CarType spotType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Car car;
 
     private LocalDateTime entryTime;
@@ -51,7 +52,7 @@ public class ParkingSpot {
     private boolean occupied;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "spot")
+    @OneToMany(mappedBy = "spot", fetch = FetchType.LAZY)
     private List<ParkingTransaction> transactions;
 
     @Override

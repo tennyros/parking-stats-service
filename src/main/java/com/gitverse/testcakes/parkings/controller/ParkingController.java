@@ -32,9 +32,7 @@ public class ParkingController {
     private final ParkingExitServiceImpl exitService;
 
     @PostMapping("/entry")
-    public ResponseEntity<CarEntryResponse> registerEntry(
-            @RequestBody @Valid CarEntryRequest request) {
-
+    public ResponseEntity<CarEntryResponse> registerEntry(@RequestBody @Valid CarEntryRequest request) {
         ParkingTransaction transaction = entryService.registerEntry(request);
         return ResponseEntity.ok(
                 new CarEntryResponse(
@@ -45,9 +43,7 @@ public class ParkingController {
     }
 
     @PostMapping("/exit")
-    public ResponseEntity<CarExitResponse> processExit(
-            @RequestBody @Valid CarExitRequest request) {
-
+    public ResponseEntity<CarExitResponse> processExit(@RequestBody @Valid CarExitRequest request) {
         ParkingTransaction transaction = exitService.processExit(request.licensePlate());
         return ResponseEntity.ok(
                 new CarExitResponse(

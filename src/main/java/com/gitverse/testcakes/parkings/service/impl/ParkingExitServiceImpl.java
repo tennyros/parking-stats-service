@@ -24,7 +24,7 @@ public class ParkingExitServiceImpl implements ParkingExitService {
     @Transactional
     public ParkingTransaction processExit(String licensePlate) {
         ParkingTransaction transaction = transactionRepo
-            .findFirstByCarLicensePlateAndExitTimeIsNullOrderByEntryTimeDesc(licensePlate)
+            .findActiveTransaction(licensePlate)
             .orElseThrow(() -> new CarNotFoundException(String.format(
                     "Car with %s license plate in not parked", licensePlate)));
 
@@ -32,7 +32,6 @@ public class ParkingExitServiceImpl implements ParkingExitService {
         spotService.releaseSpot(transaction.getSpot().getId());
         carService.updateCarExitTime(licensePlate, LocalDateTime.now());
 
-        
         return transactionRepo.save(transaction);
     }
 }

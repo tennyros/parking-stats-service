@@ -1,6 +1,7 @@
 package com.gitverse.testcakes.parkings.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,14 +34,14 @@ public class ParkingTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne
+
     @JoinColumn(name = "car_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Car car;
 
-    @ManyToOne
     @ToString.Exclude
     @JoinColumn(name = "spot_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private ParkingSpot spot;
     
     private LocalDateTime entryTime;

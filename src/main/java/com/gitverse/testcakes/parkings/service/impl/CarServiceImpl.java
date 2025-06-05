@@ -19,22 +19,25 @@ public class CarServiceImpl implements CarService {
     @Override
     @Transactional
     public Car findOrCreateCar(String licensePlate, CarType type) {
-        return carRepository.findById(licensePlate)
-                .orElseGet(() -> {
-                    Car car = new Car();
-                    car.setLicensePlate(licensePlate);
-                    car.setType(type);
-                    return carRepository.save(car);
-                });
+        Car car = carRepository.findByLicensePlateWithTransactions(licensePlate);
+        if (car != null) {
+            return car;
+        }
+        
+        car = new Car();
+        car.setLicensePlate(licensePlate);
+        car.setType(type);
+        car.setEntryTime(LocalDateTime.now());
+        return carRepository.save(car);
     }
 
     @Override
     @Transactional
     public void updateCarExitTime(String licensePlate, LocalDateTime exitTime) {
-        carRepository.findById(licensePlate)
-                .ifPresent(car -> {
-                    car.setExitTime(exitTime);
-                    carRepository.save(car);
-                });
+        Car car = carRepository.findByLicensePlateWithTransactions(licensePlate);
+        if (car != null) {
+            car.setExitTime(exitTime);
+            carRepository.save(car);
+        }
     }
 }

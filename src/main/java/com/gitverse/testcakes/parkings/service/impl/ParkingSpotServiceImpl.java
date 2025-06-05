@@ -18,13 +18,6 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
     @Override
     @Transactional
     public ParkingSpot occupySpot(CarType carType) {
-
-        boolean spotTypeExists = spotRepository.existsBySpotType(carType);
-
-        if (!spotTypeExists) {
-            throw new IllegalStateException("Parking spots for type " + carType + " is not set up");
-        }
-
         return spotRepository.findFirstBySpotTypeAndOccupiedFalse(carType)
                 .map(spot -> {
                     spot.setOccupied(true);
