@@ -18,7 +18,8 @@
             <column name="occupied"/>
         </createIndex>
 
-        <comment>Add indexes for parking transactions to optimize active parking check and for parking spots to optimize free spot search</comment>
+        <comment>Add indexes for parking transactions to optimize active parking check and
+            for parking spots to optimize free spot search</comment>
     </changeSet>
 
 </databaseChangeLog> 

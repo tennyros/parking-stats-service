@@ -6,8 +6,4 @@ public class CarAlreadyParkedException extends RuntimeException {
         super(licensePlate);
     }
 
-    public CarAlreadyParkedException(String licensePlate, Throwable cause) {
-        super(licensePlate, cause);
-    }
-
 }

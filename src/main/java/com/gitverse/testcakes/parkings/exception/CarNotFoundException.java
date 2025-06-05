@@ -6,8 +6,4 @@ public class CarNotFoundException extends RuntimeException {
         super(message);
     }
 
-    public CarNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

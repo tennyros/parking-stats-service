@@ -1,10 +1,25 @@
 package com.gitverse.testcakes.parkings.dto.car.request;
 
+import com.gitverse.testcakes.parkings.validation.LicensePlatePatterns;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
+/**
+ * Data Transfer Object for car exit request.<p>
+ * Contains information required to process a car's exit from the parking lot.
+ *
+ * @author vadim_23
+ */
+@Schema(description = "Request object for car exit registration")
 public record CarExitRequest(
-
-    @NotBlank(message = "License plate cannot be empty")
+    
+    @Schema(description = "License plate of the exiting car", example = "A123BC")
+    @NotBlank(message = "License plate is required")
+    @Pattern(
+        regexp = LicensePlatePatterns.RUSSIAN_LICENSE_PLATE,
+        message = "Invalid license plate format. Must follow Russian GOST R 50577-2018 standard"
+    )
     String licensePlate
-
+    
 ) {}

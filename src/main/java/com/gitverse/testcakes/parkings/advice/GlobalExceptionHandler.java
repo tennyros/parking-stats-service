@@ -34,14 +34,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoAvailableSpotsException.class)
-    public ProblemDetail handleInvalidServ(NoAvailableSpotsException ex, HttpServletRequest request) {
+    public ProblemDetail handleNoAvailableSpots(NoAvailableSpotsException ex, HttpServletRequest request) {
         log.error("No free spot for type: {}", ex.getMessage());
+        return buildProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage(), "Not found", request);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
+        log.error("Invalid argument: {}", ex.getMessage());
         return buildProblemDetail(HttpStatus.BAD_REQUEST, ex.getMessage(), "Bad request", request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
-
         log.error("Validation failed for request {}: {}", request.getRequestURI(), ex.getMessage());
 
         ProblemDetail problemDetail = buildProblemDetail(HttpStatus.BAD_REQUEST, "One or more fields are invalid",

@@ -6,8 +6,4 @@ public class NoAvailableSpotsException extends RuntimeException {
         super(message);
     }
 
-    public NoAvailableSpotsException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }
