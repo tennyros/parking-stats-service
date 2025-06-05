@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="create-parking-spot-table" author="vadim_23">
+        <createTable tableName="parking_spots">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="spot_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_license_plate" type="VARCHAR(20)"/>
+            <column name="entry_time" type="TIMESTAMP"/>
+            <column name="exit_time" type="TIMESTAMP"/>
+            <column name="duration" type="DOUBLE"/>
+            <column name="occupied" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="parking_spots"
+                baseColumnNames="car_license_plate"
+                referencedTableName="cars"
+                referencedColumnNames="license_plate"
+                constraintName="fk_spot_car"
+                onDelete="SET NULL"/>
+
+        <comment>Create parking_spots table with relations to cars</comment>
+    </changeSet>
+
+</databaseChangeLog>
