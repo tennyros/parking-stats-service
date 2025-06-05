@@ -5,12 +5,14 @@ import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.repository.ParkingSpotRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ParkingSpotInitializer {
@@ -24,42 +26,31 @@ public class ParkingSpotInitializer {
             List<ParkingSpot> spots = new ArrayList<>();
             
             for (int i = 1; i <= 20; i++) {
-                spots.add(
-                    ParkingSpot.builder()
-                        .spotType(CarType.PASSENGER)
-                        .occupied(false)
-                        .build()
-                );
+                spots.add(createSpot(CarType.PASSENGER));
             }
             
             for (int i = 1; i <= 10; i++) {
-                spots.add(
-                    ParkingSpot.builder()
-                        .spotType(CarType.TRUCK)
-                        .occupied(false)
-                        .build()
-                );
+                spots.add(createSpot(CarType.TRUCK));
             }
 
             for (int i = 1; i <= 10; i++) {
-                spots.add(
-                        ParkingSpot.builder()
-                                .spotType(CarType.MOTORCYCLE)
-                                .occupied(false)
-                                .build()
-                );
+                spots.add(createSpot(CarType.MOTORCYCLE));
             }
 
             for (int i = 1; i <= 10; i++) {
-                spots.add(
-                        ParkingSpot.builder()
-                                .spotType(CarType.SPECIAL)
-                                .occupied(false)
-                                .build()
-                );
+                spots.add(createSpot(CarType.SPECIAL));
             }
             
             spotRepository.saveAll(spots);
+            log.info("Initialized {} parking spots", spots.size());
         }
     }
+
+    private ParkingSpot createSpot(CarType type) {
+        return ParkingSpot.builder()
+                .spotType(type)
+                .occupied(false)
+                .build();
+    }
+
 }
