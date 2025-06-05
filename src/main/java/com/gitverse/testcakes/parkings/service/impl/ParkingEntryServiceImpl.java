@@ -33,13 +33,9 @@ public class ParkingEntryServiceImpl implements ParkingEntryService {
         checkIfCarAlreadyParked(car);
         ParkingSpot spot = spotService.occupySpot(car.getType());
         ParkingTransaction transaction = buildTransaction(car, spot);
-        log.info("Car {} parked at spot {}", normalizedPlate, spot.getId());
+        log.debug("Car {} parked at spot {}", normalizedPlate, spot.getId());
 
         return transaction;
-    }
-
-    private String normalizeLicensePlate(String plate) {
-        return plate.replaceAll("[\\s-]", "").toUpperCase();
     }
 
     private void checkIfCarAlreadyParked(Car car) {
@@ -57,5 +53,9 @@ public class ParkingEntryServiceImpl implements ParkingEntryService {
                         .entryTime(LocalDateTime.now())
                         .build()
         );
+    }
+
+    private String normalizeLicensePlate(String plate) {
+        return plate.replaceAll("[\\s-]", "").toUpperCase();
     }
 }

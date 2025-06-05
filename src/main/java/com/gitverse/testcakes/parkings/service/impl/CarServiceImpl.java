@@ -5,11 +5,13 @@ import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.repository.CarRepository;
 import com.gitverse.testcakes.parkings.service.CarService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
@@ -24,6 +26,7 @@ public class CarServiceImpl implements CarService {
             return car;
         }
         
+        log.debug("Creating new car with license plate {} and type {}", licensePlate, type);
         car = new Car();
         car.setLicensePlate(licensePlate);
         car.setType(type);
@@ -38,6 +41,7 @@ public class CarServiceImpl implements CarService {
         if (car != null) {
             car.setExitTime(exitTime);
             carRepository.save(car);
+            log.debug("Updated exit time for car {} to {}", licensePlate, exitTime);
         }
     }
 }
