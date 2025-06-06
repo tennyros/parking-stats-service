@@ -49,6 +49,11 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase}</version>
@@ -108,6 +113,8 @@
                 <configuration>
                     <excludes>
                         <exclude>**/ParkingApplication.class</exclude>
+                        <exclude>**/*ReportStatistics.class</exclude>
+                        <exclude>**/config/**</exclude>
                         <exclude>**/entity/**</exclude>
                         <exclude>**/dto/**</exclude>
                         <exclude>**/util/**</exclude>
