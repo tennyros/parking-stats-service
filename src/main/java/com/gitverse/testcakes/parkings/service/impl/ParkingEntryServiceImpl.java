@@ -16,6 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+/**
+ * Implementation of the ParkingEntryService interface.
+ *
+ * @see ParkingEntryService
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,7 +34,7 @@ public class ParkingEntryServiceImpl implements ParkingEntryService {
     @Transactional
     public ParkingTransaction registerEntry(CarEntryRequest request) {
         String normalizedPlate = normalizeLicensePlate(request.licensePlate());
-        Car car = carService.findOrCreateCar(normalizedPlate, request.type());
+        Car car = carService.findOrRegisterCar(normalizedPlate, request.type());
         checkIfCarAlreadyParked(car);
         ParkingSpot spot = spotService.occupySpot(car.getType());
         ParkingTransaction transaction = buildTransaction(car, spot);

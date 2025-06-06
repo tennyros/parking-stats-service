@@ -10,6 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the ParkingSpotService interface.
+ *
+ * @see ParkingSpotService
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -19,27 +24,27 @@ public class ParkingSpotServiceImpl implements ParkingSpotService {
 
     @Override
     @Transactional
-    public ParkingSpot occupySpot(CarType type) {
-        ParkingSpot spot = spotRepository.findFirstBySpotTypeAndOccupiedFalse(type)
+    public ParkingSpot occupySpot(CarType carType) {
+        ParkingSpot spot = spotRepository.findFirstBySpotTypeAndOccupiedFalse(carType)
                 .orElseThrow(() -> {
-                    log.warn("No available spots found for car type {}", type);
+                    log.warn("No available spots found for car type {}", carType);
                     return new NoAvailableSpotsException(String.format(
-                            "No available spots for %s type", type));
+                            "No available spots for %s type", carType));
                 });
-
+        
         spot.setOccupied(true);
-        log.debug("Occupied spot {} for car type {}", spot.getId(), type);
+        log.debug("Occupied spot {} for car type {}", spot.getId(), carType);
         return spotRepository.save(spot);
     }
 
     @Override
     @Transactional
-    public void releaseSpot(Long spotId) {
-        spotRepository.findById(spotId).ifPresent(spot -> {
-            spot.setOccupied(false);
-            spotRepository.save(spot);
-            log.debug("Released spot {}", spotId);
-        });
+    public void freeSpot(Long spotId) {
+        ParkingSpot spot = spotRepository.findById(spotId)
+                .orElseThrow(() -> new NoAvailableSpotsException("Parking spot not found with ID: " + spotId));
+        
+        spot.setOccupied(false);
+        spotRepository.save(spot);
+        log.debug("Parking spot {} has been freed", spotId);
     }
-
 }

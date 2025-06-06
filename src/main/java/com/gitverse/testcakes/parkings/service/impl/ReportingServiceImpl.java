@@ -6,6 +6,7 @@ import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.repository.ParkingTransactionRepository;
 import com.gitverse.testcakes.parkings.service.ReportingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,40 +17,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Implementation of the reporting service for parking management.
- * Provides functionality to generate comprehensive reports about parking activities
- * within specified time periods.
+ * Implementation of the ReportingService interface.
  *
- * @author vadim_23
+ * @see ReportingService
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportingServiceImpl implements ReportingService {
 
     private final ParkingTransactionRepository transactionRepository;
 
-    /**
-     * Generates a comprehensive parking report for the specified time period.<p>
-     * The report includes:<p>
-     * - Total number of cars parked<p>
-     * - Total duration of all parking sessions<p>
-     * - Average parking duration<p>
-     * - List of all parking transactions
-     *
-     * @param start the start time of the report period (inclusive)
-     * @param end the end time of the report period (inclusive)
-     * @return ParkingReport containing aggregated statistics and transaction details
-     * @throws IllegalArgumentException if start time is after end time
-     */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ParkingReport generateReport(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
             throw new IllegalArgumentException("Start time must be before end time");
         }
 
         List<ParkingTransaction> transactions = transactionRepository.findAllByEntryTimeBetween(start, end);
-
+        
         Map<CarType, Long> entriesByType = transactions.stream()
                 .collect(Collectors.groupingBy(
                         t -> t.getCar().getType(),

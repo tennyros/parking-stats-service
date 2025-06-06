@@ -11,6 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+/**
+ * Implementation of the CarService interface.
+ *
+ * @see CarService
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -20,28 +25,27 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional
-    public Car findOrCreateCar(String licensePlate, CarType type) {
-        Car car = carRepository.findByLicensePlateWithTransactions(licensePlate);
-        if (car != null) {
-            return car;
-        }
-        
-        log.debug("Creating new car with license plate {} and type {}", licensePlate, type);
-        car = new Car();
-        car.setLicensePlate(licensePlate);
-        car.setType(type);
-        car.setEntryTime(LocalDateTime.now());
-        return carRepository.save(car);
+    public Car findOrRegisterCar(String licensePlate, CarType type) {
+        return carRepository.findByLicensePlateWithTransactions(licensePlate)
+                .orElseGet(() -> {
+                    log.debug("Registering new car with license plate {} and type {}", licensePlate, type);
+                    Car car = Car.builder()
+                            .licensePlate(licensePlate)
+                            .type(type)
+                            .entryTime(LocalDateTime.now())
+                            .build();
+                    return carRepository.save(car);
+                });
     }
 
     @Override
     @Transactional
     public void updateCarExitTime(String licensePlate, LocalDateTime exitTime) {
-        Car car = carRepository.findByLicensePlateWithTransactions(licensePlate);
-        if (car != null) {
-            car.setExitTime(exitTime);
-            carRepository.save(car);
-            log.debug("Updated exit time for car {} to {}", licensePlate, exitTime);
-        }
+        carRepository.findByLicensePlateWithTransactions(licensePlate)
+                .ifPresent(car -> {
+                    car.setExitTime(exitTime);
+                    carRepository.save(car);
+                    log.debug("Updated exit time for car {} to {}", licensePlate, exitTime);
+                });
     }
 }
