@@ -2,8 +2,11 @@ package com.gitverse.testcakes.parkings.repository;
 
 import com.gitverse.testcakes.parkings.entity.Car;
 import com.gitverse.testcakes.parkings.entity.ParkingTransaction;
+import jakarta.persistence.QueryHint;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
@@ -28,21 +31,6 @@ import java.util.Optional;
 public interface ParkingTransactionRepository extends JpaRepository<ParkingTransaction, Long> {
 
     /**
-     * Finds all parking transactions that occurred between the specified start and end times.
-     * Uses JOIN FETCH to load associated cars in a single query.
-     *
-     * @param start the start time of the range (inclusive)
-     * @param end the end time of the range (inclusive)
-     * @return a list of parking transactions within the specified time range
-     */
-    @Query("""
-                SELECT DISTINCT pt
-                FROM ParkingTransaction pt JOIN FETCH pt.car
-                WHERE pt.entryTime BETWEEN :start AND :end
-           """)
-    List<ParkingTransaction> findAllByEntryTimeBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
-
-    /**
      * Finds the active parking transaction for a car with the specified license plate.
      * An active transaction is one where the exit time is null.
      *
@@ -50,10 +38,10 @@ public interface ParkingTransactionRepository extends JpaRepository<ParkingTrans
      * @return an Optional containing the active parking transaction if found
      */
     @Query("""
-                SELECT pt
-                FROM ParkingTransaction pt
-                WHERE pt.car.licensePlate = :licensePlate AND pt.exitTime IS NULL
-           """)
+        SELECT pt
+        FROM ParkingTransaction pt
+        WHERE pt.car.licensePlate = :licensePlate AND pt.exitTime IS NULL
+    """)
     Optional<ParkingTransaction> findActiveTransaction(@Param("licensePlate") String licensePlate);
 
     /**
@@ -63,5 +51,22 @@ public interface ParkingTransactionRepository extends JpaRepository<ParkingTrans
      * @return true if the car has an active parking session, false otherwise
      */
     boolean existsByCarAndExitTimeIsNull(Car car);
+
+    @Query("""
+        SELECT pt
+        FROM ParkingTransaction pt
+        JOIN FETCH pt.car
+        WHERE pt.entryTime BETWEEN :start AND :end
+        ORDER BY pt.entryTime, pt.id
+    """)
+    @QueryHints({
+            @QueryHint(name = "org.hibernate.fetchSize", value = "100"),
+            @QueryHint(name = "org.hibernate.readOnly", value = "true")
+    })
+    List<ParkingTransaction> findAllByEntryTimeBetweenWithPagination(
+        @Param("start") LocalDateTime start,
+        @Param("end") LocalDateTime end,
+        Pageable pageable
+    );
 
 }
