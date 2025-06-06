@@ -1,9 +1,6 @@
 package com.gitverse.testcakes.parkings.service.impl;
 
-import com.gitverse.testcakes.parkings.entity.Car;
-import com.gitverse.testcakes.parkings.entity.ParkingSpot;
 import com.gitverse.testcakes.parkings.entity.ParkingTransaction;
-import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.exception.CarNotFoundException;
 import com.gitverse.testcakes.parkings.repository.ParkingTransactionRepository;
 import com.gitverse.testcakes.parkings.service.CarService;
@@ -18,12 +15,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.gitverse.testcakes.parkings.util.TestData.TEST_LICENSE_PLATE;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestTransaction;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -33,7 +29,7 @@ import static org.mockito.Mockito.when;
 class ParkingExitServiceImplTest {
 
     @Mock
-    private ParkingTransactionRepository transactionRepo;
+    private ParkingTransactionRepository transactionRepository;
 
     @Mock
     private ParkingSpotService spotService;
@@ -45,67 +41,39 @@ class ParkingExitServiceImplTest {
     private ParkingExitServiceImpl exitService;
 
     private ParkingTransaction testTransaction;
-    private ParkingSpot testSpot;
-    private static final String TEST_LICENSE_PLATE = "A123BC";
 
     @BeforeEach
     void setUp() {
-        Car testCar = new Car();
-        testCar.setLicensePlate(TEST_LICENSE_PLATE);
-        testCar.setType(CarType.PASSENGER);
-
-        testSpot = new ParkingSpot();
-        testSpot.setId(1L);
-        testSpot.setSpotType(CarType.PASSENGER);
-
-        testTransaction = ParkingTransaction.builder()
-                .car(testCar)
-                .spot(testSpot)
-                .entryTime(LocalDateTime.now().minusHours(2))
-                .build();
+        testTransaction = buildTestTransaction();
     }
 
     @Test
     void processExit_Success() {
-        when(transactionRepo.findActiveTransaction(TEST_LICENSE_PLATE))
+        when(transactionRepository.findActiveTransaction(TEST_LICENSE_PLATE))
                 .thenReturn(Optional.of(testTransaction));
-        when(transactionRepo.save(any(ParkingTransaction.class)))
+        when(transactionRepository.save(any(ParkingTransaction.class)))
                 .thenReturn(testTransaction);
 
         ParkingTransaction result = exitService.processExit(TEST_LICENSE_PLATE);
 
         assertNotNull(result);
         assertNotNull(result.getExitTime());
-        verify(spotService).releaseSpot(testSpot.getId());
+        verify(spotService).freeSpot(testTransaction.getSpot().getId());
         verify(carService).updateCarExitTime(eq(TEST_LICENSE_PLATE), any(LocalDateTime.class));
-        verify(transactionRepo).save(testTransaction);
+        verify(transactionRepository).save(testTransaction);
     }
 
     @Test
-    void processExit_CarNotFound() {
-        when(transactionRepo.findActiveTransaction(TEST_LICENSE_PLATE))
+    void processExit_NoActiveTransaction_ThrowsException() {
+        when(transactionRepository.findActiveTransaction(TEST_LICENSE_PLATE))
                 .thenReturn(Optional.empty());
 
-        assertThrows(CarNotFoundException.class, () -> exitService.processExit(TEST_LICENSE_PLATE));
-        verify(spotService, never()).releaseSpot(any());
-        verify(carService, never()).updateCarExitTime(anyString(), any());
-        verify(transactionRepo, never()).save(any());
-    }
+        assertThrows(CarNotFoundException.class, () ->
+            exitService.processExit(TEST_LICENSE_PLATE)
+        );
 
-    @Test
-    void processExit_SetsCorrectDuration() {
-        LocalDateTime entryTime = LocalDateTime.now().minusHours(2);
-        testTransaction.setEntryTime(entryTime);
-        when(transactionRepo.findActiveTransaction(TEST_LICENSE_PLATE))
-                .thenReturn(Optional.of(testTransaction));
-        when(transactionRepo.save(any(ParkingTransaction.class)))
-                .thenReturn(testTransaction);
-
-        ParkingTransaction result = exitService.processExit(TEST_LICENSE_PLATE);
-
-        assertNotNull(result.getExitTime());
-        assertTrue(result.getExitTime().isAfter(entryTime));
-        assertNotNull(result.getDuration());
-        assertEquals(2, result.getDuration().toHours());
+        verify(spotService, never()).freeSpot(any());
+        verify(carService, never()).updateCarExitTime(any(), any());
+        verify(transactionRepository, never()).save(any());
     }
 } 

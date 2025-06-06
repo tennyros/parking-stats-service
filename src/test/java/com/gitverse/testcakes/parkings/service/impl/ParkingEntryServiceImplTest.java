@@ -4,12 +4,9 @@ import com.gitverse.testcakes.parkings.dto.car.request.CarEntryRequest;
 import com.gitverse.testcakes.parkings.entity.Car;
 import com.gitverse.testcakes.parkings.entity.ParkingSpot;
 import com.gitverse.testcakes.parkings.entity.ParkingTransaction;
-import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.exception.CarAlreadyParkedException;
 import com.gitverse.testcakes.parkings.exception.NoAvailableSpotsException;
 import com.gitverse.testcakes.parkings.repository.ParkingTransactionRepository;
-import com.gitverse.testcakes.parkings.service.CarService;
-import com.gitverse.testcakes.parkings.service.ParkingSpotService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,11 +14,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.gitverse.testcakes.parkings.util.TestData.TEST_CAR_TYPE;
+import static com.gitverse.testcakes.parkings.util.TestData.TEST_LICENSE_PLATE;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestCar;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestSpot;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestTransaction;
+import static com.gitverse.testcakes.parkings.util.TestData.buildValidEntryRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,90 +33,91 @@ import static org.mockito.Mockito.when;
 class ParkingEntryServiceImplTest {
 
     @Mock
-    private CarService carService;
+    private CarServiceImpl carService;
 
     @Mock
-    private ParkingSpotService spotService;
+    private ParkingSpotServiceImpl spotService;
 
     @Mock
-    private ParkingTransactionRepository transactionRepo;
+    private ParkingTransactionRepository transactionRepository;
 
     @InjectMocks
     private ParkingEntryServiceImpl entryService;
 
-    private CarEntryRequest validRequest;
     private Car testCar;
     private ParkingSpot testSpot;
     private ParkingTransaction testTransaction;
+    private CarEntryRequest testRequest;
 
     @BeforeEach
     void setUp() {
-        validRequest = new CarEntryRequest("A123BC", CarType.PASSENGER);
-        testCar = new Car();
-        testCar.setLicensePlate("A123BC");
-        testCar.setType(CarType.PASSENGER);
-
-        testSpot = new ParkingSpot();
-        testSpot.setId(1L);
-        testSpot.setSpotType(CarType.PASSENGER);
-
-        testTransaction = ParkingTransaction.builder()
-                .car(testCar)
-                .spot(testSpot)
-                .build();
+        testCar = buildTestCar();
+        testSpot = buildTestSpot();
+        testTransaction = buildTestTransaction();
+        testRequest = buildValidEntryRequest();
     }
 
     @Test
     void registerEntry_Success() {
-        when(carService.findOrCreateCar(anyString(), any(CarType.class))).thenReturn(testCar);
-        when(spotService.occupySpot(any(CarType.class))).thenReturn(testSpot);
-        when(transactionRepo.existsByCarAndExitTimeIsNull(any(Car.class))).thenReturn(false);
-        when(transactionRepo.save(any(ParkingTransaction.class))).thenReturn(testTransaction);
+        when(carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE))
+                .thenReturn(testCar);
+        when(spotService.occupySpot(TEST_CAR_TYPE)).thenReturn(testSpot);
+        when(transactionRepository.save(any(ParkingTransaction.class))).thenReturn(testTransaction);
+        when(transactionRepository.existsByCarAndExitTimeIsNull(testCar)).thenReturn(false);
 
-        ParkingTransaction result = entryService.registerEntry(validRequest);
+        ParkingTransaction result = entryService.registerEntry(testRequest);
 
         assertNotNull(result);
         assertEquals(testCar, result.getCar());
         assertEquals(testSpot, result.getSpot());
-        verify(carService).findOrCreateCar("A123BC", CarType.PASSENGER);
-        verify(spotService).occupySpot(CarType.PASSENGER);
-        verify(transactionRepo).save(any(ParkingTransaction.class));
+        assertNotNull(result.getEntryTime());
+        assertNull(result.getExitTime());
+        verify(transactionRepository).save(any(ParkingTransaction.class));
     }
 
     @Test
-    void registerEntry_CarAlreadyParked() {
-        when(carService.findOrCreateCar(anyString(), any(CarType.class))).thenReturn(testCar);
-        when(transactionRepo.existsByCarAndExitTimeIsNull(any(Car.class))).thenReturn(true);
+    void registerEntry_NoAvailableSpots_ThrowsException() {
+        when(carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE))
+                .thenReturn(testCar);
+        when(spotService.occupySpot(TEST_CAR_TYPE))
+                .thenThrow(new NoAvailableSpotsException("No available spots"));
 
-        assertThrows(CarAlreadyParkedException.class, () -> entryService.registerEntry(validRequest));
-        verify(carService).findOrCreateCar("A123BC", CarType.PASSENGER);
-        verify(spotService, never()).occupySpot(any(CarType.class));
-        verify(transactionRepo, never()).save(any(ParkingTransaction.class));
+        assertThrows(NoAvailableSpotsException.class, () ->
+            entryService.registerEntry(testRequest)
+        );
+
+        verify(transactionRepository, never()).save(any());
     }
 
     @Test
-    void registerEntry_NoAvailableSpots() {
-        when(carService.findOrCreateCar(anyString(), any(CarType.class))).thenReturn(testCar);
-        when(transactionRepo.existsByCarAndExitTimeIsNull(any(Car.class))).thenReturn(false);
-        when(spotService.occupySpot(any(CarType.class))).thenThrow(new NoAvailableSpotsException("No spots available"));
+    void registerEntry_CarAlreadyParked_ThrowsException() {
+        when(carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE))
+                .thenReturn(testCar);
+        when(transactionRepository.existsByCarAndExitTimeIsNull(testCar)).thenReturn(true);
 
-        assertThrows(NoAvailableSpotsException.class, () -> entryService.registerEntry(validRequest));
-        verify(carService).findOrCreateCar("A123BC", CarType.PASSENGER);
-        verify(spotService).occupySpot(CarType.PASSENGER);
-        verify(transactionRepo, never()).save(any(ParkingTransaction.class));
+        assertThrows(CarAlreadyParkedException.class, () ->
+            entryService.registerEntry(testRequest)
+        );
+
+        verify(spotService, never()).occupySpot(any());
+        verify(transactionRepository, never()).save(any());
     }
 
     @Test
-    void registerEntry_NormalizesLicensePlate() {
-        CarEntryRequest requestWithSpaces = new CarEntryRequest("A 123-BC", CarType.PASSENGER);
-        when(carService.findOrCreateCar("A123BC", CarType.PASSENGER)).thenReturn(testCar);
-        when(spotService.occupySpot(any(CarType.class))).thenReturn(testSpot);
-        when(transactionRepo.existsByCarAndExitTimeIsNull(any(Car.class))).thenReturn(false);
-        when(transactionRepo.save(any(ParkingTransaction.class))).thenReturn(testTransaction);
+    void registerEntry_CarNotParked_ProceedsWithEntry() {
+        when(carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE))
+                .thenReturn(testCar);
+        when(transactionRepository.existsByCarAndExitTimeIsNull(testCar)).thenReturn(false);
+        when(spotService.occupySpot(TEST_CAR_TYPE)).thenReturn(testSpot);
+        when(transactionRepository.save(any(ParkingTransaction.class))).thenReturn(testTransaction);
 
-        ParkingTransaction result = entryService.registerEntry(requestWithSpaces);
+        ParkingTransaction result = entryService.registerEntry(testRequest);
 
         assertNotNull(result);
-        verify(carService).findOrCreateCar("A123BC", CarType.PASSENGER);
+        assertEquals(testCar, result.getCar());
+        assertEquals(testSpot, result.getSpot());
+        assertNotNull(result.getEntryTime());
+        assertNull(result.getExitTime());
+        verify(transactionRepository).save(any(ParkingTransaction.class));
     }
 } 

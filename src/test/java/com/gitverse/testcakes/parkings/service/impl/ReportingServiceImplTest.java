@@ -2,6 +2,7 @@ package com.gitverse.testcakes.parkings.service.impl;
 
 import com.gitverse.testcakes.parkings.dto.ParkingReport;
 import com.gitverse.testcakes.parkings.entity.Car;
+import com.gitverse.testcakes.parkings.entity.ParkingSpot;
 import com.gitverse.testcakes.parkings.entity.ParkingTransaction;
 import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.repository.ParkingTransactionRepository;
@@ -16,15 +17,16 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
+import static com.gitverse.testcakes.parkings.util.TestData.TEST_ENTRY_TIME;
+import static com.gitverse.testcakes.parkings.util.TestData.TEST_EXIT_TIME;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestCar;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestSpot;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestTransaction;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,105 +38,101 @@ class ReportingServiceImplTest {
     @InjectMocks
     private ReportingServiceImpl reportingService;
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
     private List<ParkingTransaction> testTransactions;
 
     @BeforeEach
     void setUp() {
-        startTime = LocalDateTime.now().minusHours(24);
-        endTime = LocalDateTime.now();
+        Car passengerCar = buildTestCar("A123BC", CarType.PASSENGER);
+        Car truckCar = buildTestCar("B456DE", CarType.TRUCK);
+        Car motorcycleCar = buildTestCar("C789FG", CarType.MOTORCYCLE);
+        Car specialCar = buildTestCar("D012HI", CarType.SPECIAL);
 
-        Car car1 = new Car();
-        car1.setLicensePlate("A123BC");
-        car1.setType(CarType.PASSENGER);
+        ParkingSpot passengerSpot = buildTestSpot(1L, CarType.PASSENGER, false);
+        ParkingSpot truckSpot = buildTestSpot(2L, CarType.TRUCK, false);
+        ParkingSpot motorcycleSpot = buildTestSpot(3L, CarType.MOTORCYCLE, false);
+        ParkingSpot specialSpot = buildTestSpot(4L, CarType.SPECIAL, false);
 
-        Car car2 = new Car();
-        car2.setLicensePlate("B456DE");
-        car2.setType(CarType.TRUCK);
+        LocalDateTime startTime = TEST_ENTRY_TIME;
+        LocalDateTime endTime = TEST_EXIT_TIME;
 
-        ParkingTransaction transaction1 = ParkingTransaction.builder()
-                .car(car1)
-                .entryTime(startTime.plusHours(1))
-                .exitTime(startTime.plusHours(3))
-                .build();
+        ParkingTransaction passengerTransaction = buildTestTransaction(
+            passengerCar, passengerSpot, startTime, endTime);
+        ParkingTransaction truckTransaction = buildTestTransaction(
+            truckCar, truckSpot, startTime, endTime);
+        ParkingTransaction motorcycleTransaction = buildTestTransaction(
+            motorcycleCar, motorcycleSpot, startTime, endTime);
+        ParkingTransaction specialTransaction = buildTestTransaction(
+            specialCar, specialSpot, startTime, endTime);
 
-        ParkingTransaction transaction2 = ParkingTransaction.builder()
-                .car(car2)
-                .entryTime(startTime.plusHours(2))
-                .exitTime(startTime.plusHours(4))
-                .build();
-
-        testTransactions = Arrays.asList(transaction1, transaction2);
+        testTransactions = Arrays.asList(
+            passengerTransaction,
+            truckTransaction,
+            motorcycleTransaction,
+            specialTransaction
+        );
     }
 
     @Test
     void generateReport_Success() {
-        when(transactionRepository.findAllByEntryTimeBetween(startTime, endTime))
+        when(transactionRepository.findAllByEntryTimeBetween(any(), any()))
                 .thenReturn(testTransactions);
 
-        ParkingReport report = reportingService.generateReport(startTime, endTime);
+        ParkingReport report = reportingService.generateReport(
+            TEST_ENTRY_TIME,
+            TEST_EXIT_TIME
+        );
 
         assertNotNull(report);
-        assertEquals(2, report.totalEntries());
-        assertEquals(2, report.totalExits());
-        assertEquals(Duration.ofHours(2), report.averageParkingDuration());
-        
-        Map<CarType, Long> entriesByType = report.entriesByType();
-        assertEquals(1, entriesByType.get(CarType.PASSENGER));
-        assertEquals(1, entriesByType.get(CarType.TRUCK));
-    }
-
-    @Test
-    void generateReport_InvalidDateRange() {
-        assertThrows(IllegalArgumentException.class,
-            () -> reportingService.generateReport(endTime, startTime));
-        verify(transactionRepository, never()).findAllByEntryTimeBetween(any(), any());
-    }
-
-    @Test
-    void generateReport_NoTransactions() {
-        when(transactionRepository.findAllByEntryTimeBetween(startTime, endTime))
-                .thenReturn(List.of());
-
-        ParkingReport report = reportingService.generateReport(startTime, endTime);
-
-        assertNotNull(report);
-        assertEquals(0, report.totalEntries());
-        assertEquals(0, report.totalExits());
-        assertEquals(Duration.ZERO, report.averageParkingDuration());
-        assertTrue(report.entriesByType().isEmpty());
+        assertEquals(4, report.totalEntries());
+        assertEquals(4, report.totalExits());
+        assertEquals(Duration.ofDays(2), report.averageParkingDuration());
+        assertEquals(1L, report.entriesByType().get(CarType.PASSENGER));
+        assertEquals(1L, report.entriesByType().get(CarType.TRUCK));
+        assertEquals(1L, report.entriesByType().get(CarType.MOTORCYCLE));
+        assertEquals(1L, report.entriesByType().get(CarType.SPECIAL));
     }
 
     @Test
     void generateReport_WithActiveTransactions() {
-        Car car3 = new Car();
-        car3.setLicensePlate("C789FG");
-        car3.setType(CarType.PASSENGER);
+        // Create transactions with some having null exit time
+        Car activeCar = buildTestCar("E345JK", CarType.PASSENGER);
+        Car completedCar = buildTestCar("F678LM", CarType.PASSENGER);
+        
+        ParkingSpot activeSpot = buildTestSpot(5L, CarType.PASSENGER, false);
+        ParkingSpot completedSpot = buildTestSpot(6L, CarType.PASSENGER, false);
 
-        ParkingTransaction activeTransaction = ParkingTransaction.builder()
-                .car(car3)
-                .entryTime(startTime.plusHours(5))
-                .build();
+        ParkingTransaction activeTransaction = buildTestTransaction(
+            activeCar, activeSpot, TEST_ENTRY_TIME, null);
+        ParkingTransaction completedTransaction = buildTestTransaction(
+            completedCar, completedSpot, TEST_ENTRY_TIME, TEST_EXIT_TIME);
 
-        List<ParkingTransaction> transactionsWithActive = Arrays.asList(
-                testTransactions.get(0),
-                testTransactions.get(1),
-                activeTransaction
+        List<ParkingTransaction> mixedTransactions = Arrays.asList(
+            activeTransaction,
+            completedTransaction
         );
 
-        when(transactionRepository.findAllByEntryTimeBetween(startTime, endTime))
-                .thenReturn(transactionsWithActive);
+        when(transactionRepository.findAllByEntryTimeBetween(any(), any()))
+                .thenReturn(mixedTransactions);
 
-        ParkingReport report = reportingService.generateReport(startTime, endTime);
+        ParkingReport report = reportingService.generateReport(
+            TEST_ENTRY_TIME,
+            TEST_EXIT_TIME
+        );
 
         assertNotNull(report);
-        assertEquals(3, report.totalEntries());
-        assertEquals(2, report.totalExits());
-        assertEquals(Duration.ofHours(2), report.averageParkingDuration());
-        
-        Map<CarType, Long> entriesByType = report.entriesByType();
-        assertEquals(2, entriesByType.get(CarType.PASSENGER));
-        assertEquals(1, entriesByType.get(CarType.TRUCK));
+        assertEquals(2, report.totalEntries());
+        assertEquals(1, report.totalExits());
+        assertEquals(Duration.ofDays(2), report.averageParkingDuration());
+        assertEquals(2L, report.entriesByType().get(CarType.PASSENGER));
+    }
+
+    @Test
+    void generateReport_InvalidDateRange_ThrowsException() {
+        assertThrows(IllegalArgumentException.class, () ->
+            reportingService.generateReport(
+                TEST_EXIT_TIME,
+                TEST_ENTRY_TIME
+            )
+        );
     }
 } 

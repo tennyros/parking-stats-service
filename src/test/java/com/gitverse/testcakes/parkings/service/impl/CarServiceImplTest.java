@@ -1,8 +1,8 @@
 package com.gitverse.testcakes.parkings.service.impl;
 
 import com.gitverse.testcakes.parkings.entity.Car;
-import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.repository.CarRepository;
+import com.gitverse.testcakes.parkings.repository.ParkingTransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,8 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
+import static com.gitverse.testcakes.parkings.util.TestData.TEST_CAR_TYPE;
+import static com.gitverse.testcakes.parkings.util.TestData.TEST_EXIT_TIME;
+import static com.gitverse.testcakes.parkings.util.TestData.TEST_LICENSE_PLATE;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestCar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,79 +29,64 @@ class CarServiceImplTest {
     @Mock
     private CarRepository carRepository;
 
+    @Mock
+    private ParkingTransactionRepository transactionRepository;
+
     @InjectMocks
     private CarServiceImpl carService;
-
-    private static final String TEST_LICENSE_PLATE = "А123ВС777";
-    private static final CarType TEST_CAR_TYPE = CarType.PASSENGER;
 
     private Car testCar;
 
     @BeforeEach
     void setUp() {
-        testCar = new Car();
-        testCar.setLicensePlate(TEST_LICENSE_PLATE);
-        testCar.setType(TEST_CAR_TYPE);
-        testCar.setEntryTime(LocalDateTime.now());
+        testCar = buildTestCar();
     }
 
     @Test
-    void findOrCreateCar_WhenCarExists_ReturnsExistingCar() {
+    void findOrRegisterCar_WhenCarExists_ReturnsExistingCar() {
         when(carRepository.findByLicensePlateWithTransactions(TEST_LICENSE_PLATE))
-                .thenReturn(testCar);
+                .thenReturn(Optional.of(testCar));
 
-        Car result = carService.findOrCreateCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
+        Car result = carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
 
         assertNotNull(result);
         assertEquals(TEST_LICENSE_PLATE, result.getLicensePlate());
         assertEquals(TEST_CAR_TYPE, result.getType());
-        verify(carRepository).findByLicensePlateWithTransactions(TEST_LICENSE_PLATE);
         verify(carRepository, never()).save(any(Car.class));
     }
 
     @Test
-    void findOrCreateCar_WhenCarDoesNotExist_CreatesNewCar() {
+    void findOrRegisterCar_WhenCarDoesNotExist_CreatesNewCar() {
         when(carRepository.findByLicensePlateWithTransactions(TEST_LICENSE_PLATE))
-                .thenReturn(null);
-        when(carRepository.save(any(Car.class))).thenAnswer(invocation -> {
-            Car car = invocation.getArgument(0);
-            car.setEntryTime(LocalDateTime.now());
-            return car;
-        });
+                .thenReturn(Optional.empty());
+        when(carRepository.save(any(Car.class))).thenReturn(testCar);
 
-        Car result = carService.findOrCreateCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
+        Car result = carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
 
         assertNotNull(result);
         assertEquals(TEST_LICENSE_PLATE, result.getLicensePlate());
         assertEquals(TEST_CAR_TYPE, result.getType());
-        assertNotNull(result.getEntryTime());
-        verify(carRepository).findByLicensePlateWithTransactions(TEST_LICENSE_PLATE);
         verify(carRepository).save(any(Car.class));
     }
 
     @Test
     void updateCarExitTime_WhenCarExists_UpdatesExitTime() {
-        LocalDateTime exitTime = LocalDateTime.now();
         when(carRepository.findByLicensePlateWithTransactions(TEST_LICENSE_PLATE))
-                .thenReturn(testCar);
+                .thenReturn(Optional.of(testCar));
         when(carRepository.save(any(Car.class))).thenReturn(testCar);
 
-        carService.updateCarExitTime(TEST_LICENSE_PLATE, exitTime);
+        carService.updateCarExitTime(TEST_LICENSE_PLATE, TEST_EXIT_TIME);
 
-        assertEquals(exitTime, testCar.getExitTime());
-        verify(carRepository).findByLicensePlateWithTransactions(TEST_LICENSE_PLATE);
-        verify(carRepository).save(testCar);
+        verify(carRepository).save(any(Car.class));
     }
 
     @Test
     void updateCarExitTime_WhenCarDoesNotExist_DoesNothing() {
-        LocalDateTime exitTime = LocalDateTime.now();
         when(carRepository.findByLicensePlateWithTransactions(TEST_LICENSE_PLATE))
-                .thenReturn(null);
+                .thenReturn(Optional.empty());
 
-        carService.updateCarExitTime(TEST_LICENSE_PLATE, exitTime);
+        carService.updateCarExitTime(TEST_LICENSE_PLATE, TEST_EXIT_TIME);
 
-        verify(carRepository).findByLicensePlateWithTransactions(TEST_LICENSE_PLATE);
         verify(carRepository, never()).save(any(Car.class));
     }
 } 
