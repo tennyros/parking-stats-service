@@ -29,12 +29,18 @@ public interface ParkingTransactionRepository extends JpaRepository<ParkingTrans
 
     /**
      * Finds all parking transactions that occurred between the specified start and end times.
+     * Uses JOIN FETCH to load associated cars in a single query.
      *
      * @param start the start time of the range (inclusive)
      * @param end the end time of the range (inclusive)
      * @return a list of parking transactions within the specified time range
      */
-    List<ParkingTransaction> findAllByEntryTimeBetween(LocalDateTime start, LocalDateTime end);
+    @Query("""
+                SELECT DISTINCT pt
+                FROM ParkingTransaction pt JOIN FETCH pt.car
+                WHERE pt.entryTime BETWEEN :start AND :end
+           """)
+    List<ParkingTransaction> findAllByEntryTimeBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     /**
      * Finds the active parking transaction for a car with the specified license plate.
@@ -43,7 +49,11 @@ public interface ParkingTransactionRepository extends JpaRepository<ParkingTrans
      * @param licensePlate the license plate of the car
      * @return an Optional containing the active parking transaction if found
      */
-    @Query("SELECT pt FROM ParkingTransaction pt WHERE pt.car.licensePlate = :licensePlate AND pt.exitTime IS NULL")
+    @Query("""
+                SELECT pt
+                FROM ParkingTransaction pt
+                WHERE pt.car.licensePlate = :licensePlate AND pt.exitTime IS NULL
+           """)
     Optional<ParkingTransaction> findActiveTransaction(@Param("licensePlate") String licensePlate);
 
     /**
