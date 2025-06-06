@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,7 +35,8 @@ import java.util.Objects;
 public class ParkingSpot {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spot_seq")
+    @SequenceGenerator(name = "spot_seq", sequenceName = "spot_seq", allocationSize = 20)
     private Long id;
 
     @Enumerated(EnumType.STRING)

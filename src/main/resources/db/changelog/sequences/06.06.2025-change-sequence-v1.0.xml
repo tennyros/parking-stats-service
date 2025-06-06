@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="create-spot-sequence" author="vadim_23">
+        <createSequence
+                sequenceName="spot_seq"
+                incrementBy="20"
+                startValue="1"/>
+    </changeSet>
+
+    <changeSet id="alter-parking-spot-id-column" author="vadim_23">
+        <comment>Alter id column to use sequence spot_seq instead of autoIncrement</comment>
+        <sql>
+            ALTER TABLE parking_spots
+            ALTER COLUMN id DROP IDENTITY IF EXISTS;
+        </sql>
+        <sql>
+            ALTER TABLE parking_spots
+            ALTER COLUMN id SET DEFAULT nextval('spot_seq');
+        </sql>
+        <sql>
+            ALTER SEQUENCE spot_seq CACHE 20;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
