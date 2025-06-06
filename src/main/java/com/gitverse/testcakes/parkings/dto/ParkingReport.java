@@ -15,8 +15,10 @@ import java.util.Map;
  * @param entriesByType A map containing the number of entries for each car type during the report period
  */
 public record ParkingReport(
+
         int totalEntries,
         int totalExits,
         Duration averageParkingDuration,
         Map<CarType, Long> entriesByType
+
 ) {}

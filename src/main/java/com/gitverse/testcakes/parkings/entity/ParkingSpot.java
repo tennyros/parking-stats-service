@@ -82,5 +82,4 @@ public class ParkingSpot {
                 .hashCode()
                 : getClass().hashCode();
     }
-
 }

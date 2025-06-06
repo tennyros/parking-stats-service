@@ -12,6 +12,8 @@ import com.gitverse.testcakes.parkings.service.ReportingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -87,12 +89,13 @@ public class ParkingControllerV1 {
     @GetMapping("/report")
     @Operation(summary = "Generate parking report", description = "Generates a report of parking operations for a given date range")
     public ResponseEntity<ParkingReport> generateReport(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @PastOrPresent LocalDateTime start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @FutureOrPresent LocalDateTime end) {
+
         log.info("Generating parking report for period {} to {}", start, end);
         ParkingReport report = reportingService.generateReport(start, end);
-        log.debug("Report generated successfully with {} entries and {} exits", 
-            report.totalEntries(), report.totalExits());
+        log.debug("Report generated successfully with {} entries and {} exits",
+                report.totalEntries(), report.totalExits());
         return ResponseEntity.ok(report);
     }
 } 

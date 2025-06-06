@@ -12,4 +12,6 @@ public interface ParkingSpotRepository extends JpaRepository<ParkingSpot, Long> 
 
     Optional<ParkingSpot> findFirstBySpotTypeAndOccupiedFalse(CarType carType);
 
+    boolean existsBy();
+
 }

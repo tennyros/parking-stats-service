@@ -75,5 +75,4 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("timestamp", OffsetDateTime.now());
         return problemDetail;
     }
-
 }

@@ -22,9 +22,9 @@ public class ParkingSpotInitializer {
     @PostConstruct
     @Transactional
     public void init() {
-        if (spotRepository.count() == 0) {
+        if (!spotRepository.existsBy()) {
             List<ParkingSpot> spots = new ArrayList<>();
-            
+
             for (int i = 1; i <= 20; i++) {
                 spots.add(createSpot(CarType.PASSENGER));
             }
@@ -52,5 +52,4 @@ public class ParkingSpotInitializer {
                 .occupied(false)
                 .build();
     }
-
 }

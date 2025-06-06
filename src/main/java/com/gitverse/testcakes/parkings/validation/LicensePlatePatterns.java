@@ -26,5 +26,4 @@ public final class LicensePlatePatterns {
      */
     public static final String RUSSIAN_LICENSE_PLATE = 
             "^([АВЕКМНОРСТУХ]\\d{3}[АВЕКМНОРСТУХ]{2}|[АВЕКМНОРСТУХ]{2}\\d{3}[АВЕКМНОРСТУХ]|\\d{4}[АВЕКМНОРСТУХ]{2})\\d{2,3}$";
-
 } 

@@ -72,5 +72,4 @@ public class Car {
                 .hashCode()
                 : getClass().hashCode();
     }
-
 }

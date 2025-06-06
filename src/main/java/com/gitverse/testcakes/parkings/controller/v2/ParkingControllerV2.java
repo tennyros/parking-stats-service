@@ -16,7 +16,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +38,7 @@ import java.time.LocalDateTime;
  *
  * @author vadim_23
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/parking")
@@ -67,7 +71,9 @@ public class ParkingControllerV2 {
     })
     @PostMapping("/entry")
     public ResponseEntity<CarEntryResponse> registerEntry(@RequestBody @Valid CarEntryRequest request) {
+        log.info("Processing entry request for car {}", request.licensePlate());
         ParkingTransaction transaction = entryService.registerEntry(request);
+        log.debug("Car {} successfully registered at spot {}", request.licensePlate(), transaction.getSpot().getId());
         return ResponseEntity.ok(
                 new CarEntryResponse(
                         transaction.getCar().getLicensePlate(),
@@ -97,7 +103,9 @@ public class ParkingControllerV2 {
     })
     @PostMapping("/exit")
     public ResponseEntity<CarExitResponse> processExit(@RequestBody @Valid CarExitRequest request) {
+        log.info("Processing exit request for car {}", request.licensePlate());
         ParkingTransaction transaction = exitService.processExit(request.licensePlate());
+        log.debug("Car {} successfully exited from spot {}", request.licensePlate(), transaction.getSpot().getId());
         return ResponseEntity.ok(
                 new CarExitResponse(
                         transaction.getCar().getLicensePlate(),
@@ -130,9 +138,13 @@ public class ParkingControllerV2 {
     })
     @GetMapping("/report")
     public ResponseEntity<ParkingReport> generateReport(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @PastOrPresent LocalDateTime start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @FutureOrPresent LocalDateTime end) {
+
+        log.info("Generating parking report for period {} to {}", start, end);
         ParkingReport report = reportingService.generateReport(start, end);
+        log.debug("Report generated successfully with {} entries and {} exits",
+                report.totalEntries(), report.totalExits());
         return ResponseEntity.ok(report);
     }
 } 
