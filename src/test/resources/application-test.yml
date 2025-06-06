@@ -4,17 +4,24 @@ spring:
   config:
     activate:
       on-profile: test
-      
+
   datasource:
     url: jdbc:${DB_BASE:postgresql}://${DB_SERVER:localhost}:${DB_PORT:5433}/${DB_NAME:parking_management_service_app}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:root}
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 1000
+          batch_versioned_data: true
+        order_inserts: true
+        order_updates: true
   liquibase:
     enabled: false
 
-logging:
-  level:
-    root: WARN
-    com.gitverse.testcakes.parkings: WARN
-    org.springframework: WARN
-    org.hibernate: WARN 
+parking:
+  batch:
+    size: 1000
