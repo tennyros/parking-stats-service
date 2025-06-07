@@ -5,7 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
 
-    <include file="changelog-v1.0/06.06.2025-changelog-v1.0.xml" relativeToChangelogFile="true"/>
-    <include file="changelog-v2.0/07.06.2025-changelog-v2.0.xml" relativeToChangelogFile="true"/>
+    <include file="07.06.2025-alter-table-cars-v1.0.xml" relativeToChangelogFile="true"/>
+    <include file="07.06.2025-alter-table-parking-spots-v1.0.xml" relativeToChangelogFile="true"/>
+    <include file="07.06.2025-create-index-reporting-v1.0.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

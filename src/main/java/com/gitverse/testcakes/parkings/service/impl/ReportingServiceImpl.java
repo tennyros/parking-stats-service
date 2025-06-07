@@ -6,7 +6,6 @@ import com.gitverse.testcakes.parkings.entity.ParkingTransaction;
 import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.repository.ParkingTransactionRepository;
 import com.gitverse.testcakes.parkings.service.ReportingService;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -112,6 +111,5 @@ public class ReportingServiceImpl implements ReportingService {
         private int processedCount = 0;
         private long totalExits = 0;
         private long totalDurationSeconds = 0;
-
     }
 }

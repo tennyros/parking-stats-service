@@ -36,10 +36,9 @@ public class ParkingEntryServiceImpl implements ParkingEntryService {
         String normalizedPlate = normalizeLicensePlate(request.licensePlate());
         Car car = carService.findOrRegisterCar(normalizedPlate, request.type());
         checkIfCarAlreadyParked(car);
-        ParkingSpot spot = spotService.occupySpot(car.getType());
+        ParkingSpot spot = spotService.occupySpot(car);
         ParkingTransaction transaction = buildTransaction(car, spot);
         log.debug("Car {} parked at spot {}", normalizedPlate, spot.getId());
-
         return transaction;
     }
 

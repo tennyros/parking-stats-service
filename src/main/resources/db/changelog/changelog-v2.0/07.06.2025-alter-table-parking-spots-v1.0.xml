@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="alter-parking-spots-rename-entry-exit-time" author="vadim_23">
+         <renameColumn tableName="parking_spots" oldColumnName="entry_time"
+                       newColumnName="last_occupied_at" columnDataType="TIMESTAMP"/>
+         <renameColumn tableName="parking_spots" oldColumnName="exit_time"
+                       newColumnName="last_freed_at" columnDataType="TIMESTAMP"/>
+        <renameColumn tableName="parking_spots" oldColumnName="car_license_plate"
+                      newColumnName="current_car_id" columnDataType="VARCHAR(20)"/>
+
+        <comment>Rename entry_time and exit_time columns to last_occupied_at
+            and last_freed_at in parking_spots table</comment>
+    </changeSet>
+
+</databaseChangeLog>

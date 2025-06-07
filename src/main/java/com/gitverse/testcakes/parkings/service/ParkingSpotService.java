@@ -1,7 +1,7 @@
 package com.gitverse.testcakes.parkings.service;
 
+import com.gitverse.testcakes.parkings.entity.Car;
 import com.gitverse.testcakes.parkings.entity.ParkingSpot;
-import com.gitverse.testcakes.parkings.entity.enums.CarType;
 import com.gitverse.testcakes.parkings.exception.NoAvailableSpotsException;
 
 /**
@@ -16,11 +16,11 @@ public interface ParkingSpotService {
      * The method will find an available spot that matches the car type requirements
      * and mark it as occupied.
      *
-     * @param carType the type of car that needs a parking spot
+     * @param car that needs a parking spot
      * @return the occupied parking spot
      * @throws NoAvailableSpotsException if no suitable spots are available for the car type
      */
-    ParkingSpot occupySpot(CarType carType);
+    ParkingSpot occupySpot(Car car);
 
     /**
      * Frees up a previously occupied parking spot.

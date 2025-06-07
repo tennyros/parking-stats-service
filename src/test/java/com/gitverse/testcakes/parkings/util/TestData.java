@@ -49,7 +49,6 @@ public class TestData {
         return Car.builder()
                 .licensePlate(TEST_LICENSE_PLATE)
                 .type(TEST_CAR_TYPE)
-                .entryTime(TEST_ENTRY_TIME)
                 .build();
     }
 
@@ -60,7 +59,6 @@ public class TestData {
         return Car.builder()
                 .licensePlate(licensePlate)
                 .type(type)
-                .entryTime(TEST_ENTRY_TIME)
                 .build();
     }
 

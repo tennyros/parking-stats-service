@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.gitverse.testcakes.parkings.util.TestData.TEST_LICENSE_PLATE;
@@ -20,7 +19,6 @@ import static com.gitverse.testcakes.parkings.util.TestData.buildTestTransaction
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,7 +57,6 @@ class ParkingExitServiceImplTest {
         assertNotNull(result);
         assertNotNull(result.getExitTime());
         verify(spotService).freeSpot(testTransaction.getSpot().getId());
-        verify(carService).updateCarExitTime(eq(TEST_LICENSE_PLATE), any(LocalDateTime.class));
         verify(transactionRepository).save(testTransaction);
     }
 
@@ -73,7 +70,6 @@ class ParkingExitServiceImplTest {
         );
 
         verify(spotService, never()).freeSpot(any());
-        verify(carService, never()).updateCarExitTime(any(), any());
         verify(transactionRepository, never()).save(any());
     }
 } 

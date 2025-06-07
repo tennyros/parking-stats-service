@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -43,15 +44,14 @@ public class ParkingSpot {
     private CarType spotType;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "current_car_id")
     private Car car;
 
-    private LocalDateTime entryTime;
-
-    private LocalDateTime exitTime;
-
-    private double duration;
-
     private boolean occupied;
+
+    private LocalDateTime lastOccupiedAt;
+
+    private LocalDateTime lastFreedAt;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "spot", fetch = FetchType.LAZY)

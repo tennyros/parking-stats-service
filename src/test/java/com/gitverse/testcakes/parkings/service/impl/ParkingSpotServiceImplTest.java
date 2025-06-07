@@ -1,5 +1,6 @@
 package com.gitverse.testcakes.parkings.service.impl;
 
+import com.gitverse.testcakes.parkings.entity.Car;
 import com.gitverse.testcakes.parkings.entity.ParkingSpot;
 import com.gitverse.testcakes.parkings.exception.NoAvailableSpotsException;
 import com.gitverse.testcakes.parkings.repository.ParkingSpotRepository;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 import static com.gitverse.testcakes.parkings.util.TestData.TEST_CAR_TYPE;
 import static com.gitverse.testcakes.parkings.util.TestData.TEST_ID;
+import static com.gitverse.testcakes.parkings.util.TestData.buildTestCar;
 import static com.gitverse.testcakes.parkings.util.TestData.buildTestSpot;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,10 +34,12 @@ class ParkingSpotServiceImplTest {
     @InjectMocks
     private ParkingSpotServiceImpl spotService;
 
+    private Car testCar;
     private ParkingSpot testSpot;
 
     @BeforeEach
     void setUp() {
+        testCar = buildTestCar();
         testSpot = buildTestSpot();
     }
 
@@ -45,7 +49,7 @@ class ParkingSpotServiceImplTest {
                 .thenReturn(Optional.of(testSpot));
         when(spotRepository.save(any(ParkingSpot.class))).thenReturn(testSpot);
 
-        ParkingSpot result = spotService.occupySpot(TEST_CAR_TYPE);
+        ParkingSpot result = spotService.occupySpot(testCar);
 
         assertNotNull(result);
         assertTrue(result.isOccupied());
@@ -58,7 +62,7 @@ class ParkingSpotServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(NoAvailableSpotsException.class, () -> 
-            spotService.occupySpot(TEST_CAR_TYPE)
+            spotService.occupySpot(testCar)
         );
     }
 

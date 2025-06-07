@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static com.gitverse.testcakes.parkings.util.TestData.TEST_CAR_TYPE;
-import static com.gitverse.testcakes.parkings.util.TestData.TEST_EXIT_TIME;
 import static com.gitverse.testcakes.parkings.util.TestData.TEST_LICENSE_PLATE;
 import static com.gitverse.testcakes.parkings.util.TestData.buildTestCar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +43,7 @@ class CarServiceImplTest {
 
     @Test
     void findOrRegisterCar_WhenCarExists_ReturnsExistingCar() {
-        when(carRepository.findByLicensePlateWithTransactions(TEST_LICENSE_PLATE))
+        when(carRepository.findById(TEST_LICENSE_PLATE))
                 .thenReturn(Optional.of(testCar));
 
         Car result = carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
@@ -57,7 +56,7 @@ class CarServiceImplTest {
 
     @Test
     void findOrRegisterCar_WhenCarDoesNotExist_CreatesNewCar() {
-        when(carRepository.findByLicensePlateWithTransactions(TEST_LICENSE_PLATE))
+        when(carRepository.findById(TEST_LICENSE_PLATE))
                 .thenReturn(Optional.empty());
         when(carRepository.save(any(Car.class))).thenReturn(testCar);
 
@@ -67,26 +66,5 @@ class CarServiceImplTest {
         assertEquals(TEST_LICENSE_PLATE, result.getLicensePlate());
         assertEquals(TEST_CAR_TYPE, result.getType());
         verify(carRepository).save(any(Car.class));
-    }
-
-    @Test
-    void updateCarExitTime_WhenCarExists_UpdatesExitTime() {
-        when(carRepository.findByLicensePlateWithTransactions(TEST_LICENSE_PLATE))
-                .thenReturn(Optional.of(testCar));
-        when(carRepository.save(any(Car.class))).thenReturn(testCar);
-
-        carService.updateCarExitTime(TEST_LICENSE_PLATE, TEST_EXIT_TIME);
-
-        verify(carRepository).save(any(Car.class));
-    }
-
-    @Test
-    void updateCarExitTime_WhenCarDoesNotExist_DoesNothing() {
-        when(carRepository.findByLicensePlateWithTransactions(TEST_LICENSE_PLATE))
-                .thenReturn(Optional.empty());
-
-        carService.updateCarExitTime(TEST_LICENSE_PLATE, TEST_EXIT_TIME);
-
-        verify(carRepository, never()).save(any(Car.class));
     }
 } 

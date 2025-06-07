@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 /**
  * Implementation of the CarService interface.
  *
@@ -26,26 +24,14 @@ public class CarServiceImpl implements CarService {
     @Override
     @Transactional
     public Car findOrRegisterCar(String licensePlate, CarType type) {
-        return carRepository.findByLicensePlateWithTransactions(licensePlate)
+        return carRepository.findById(licensePlate)
                 .orElseGet(() -> {
                     log.debug("Registering new car with license plate {} and type {}", licensePlate, type);
                     Car car = Car.builder()
                             .licensePlate(licensePlate)
                             .type(type)
-                            .entryTime(LocalDateTime.now())
                             .build();
                     return carRepository.save(car);
-                });
-    }
-
-    @Override
-    @Transactional
-    public void updateCarExitTime(String licensePlate, LocalDateTime exitTime) {
-        carRepository.findByLicensePlateWithTransactions(licensePlate)
-                .ifPresent(car -> {
-                    car.setExitTime(exitTime);
-                    carRepository.save(car);
-                    log.debug("Updated exit time for car {} to {}", licensePlate, exitTime);
                 });
     }
 }

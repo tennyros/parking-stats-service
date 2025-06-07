@@ -1,7 +1,7 @@
 package com.gitverse.testcakes.parkings.entity;
 
 import com.gitverse.testcakes.parkings.entity.enums.CarType;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +17,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,15 +33,12 @@ public class Car {
     @Id
     private String licensePlate;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CarType type;
 
-    private LocalDateTime entryTime;
-
-    private LocalDateTime exitTime;
-
     @ToString.Exclude
-    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "car", fetch = FetchType.LAZY)
     private List<ParkingTransaction> transactions;
 
     @Override

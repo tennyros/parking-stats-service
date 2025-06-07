@@ -61,7 +61,7 @@ class ParkingEntryServiceImplTest {
     void registerEntry_Success() {
         when(carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE))
                 .thenReturn(testCar);
-        when(spotService.occupySpot(TEST_CAR_TYPE)).thenReturn(testSpot);
+        when(spotService.occupySpot(testCar)).thenReturn(testSpot);
         when(transactionRepository.save(any(ParkingTransaction.class))).thenReturn(testTransaction);
         when(transactionRepository.existsByCarAndExitTimeIsNull(testCar)).thenReturn(false);
 
@@ -79,7 +79,7 @@ class ParkingEntryServiceImplTest {
     void registerEntry_NoAvailableSpots_ThrowsException() {
         when(carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE))
                 .thenReturn(testCar);
-        when(spotService.occupySpot(TEST_CAR_TYPE))
+        when(spotService.occupySpot(testCar))
                 .thenThrow(new NoAvailableSpotsException("No available spots"));
 
         assertThrows(NoAvailableSpotsException.class, () ->
@@ -108,7 +108,7 @@ class ParkingEntryServiceImplTest {
         when(carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE))
                 .thenReturn(testCar);
         when(transactionRepository.existsByCarAndExitTimeIsNull(testCar)).thenReturn(false);
-        when(spotService.occupySpot(TEST_CAR_TYPE)).thenReturn(testSpot);
+        when(spotService.occupySpot(testCar)).thenReturn(testSpot);
         when(transactionRepository.save(any(ParkingTransaction.class))).thenReturn(testTransaction);
 
         ParkingTransaction result = entryService.registerEntry(testRequest);

@@ -13,18 +13,18 @@
             <column name="spot_type" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="current_car_id" type="VARCHAR(20)"/>
+            <column name="car_license_plate" type="VARCHAR(20)"/>
             <column name="occupied" type="BOOLEAN" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_occupied_at" type="TIMESTAMP"/>
-            <column name="last_freed_at" type="TIMESTAMP"/>
+            <column name="entry_time" type="TIMESTAMP"/>
+            <column name="exit_time" type="TIMESTAMP"/>
 
         </createTable>
 
         <addForeignKeyConstraint
                 baseTableName="parking_spots"
-                baseColumnNames="current_car_id"
+                baseColumnNames="car_license_plate"
                 referencedTableName="cars"
                 referencedColumnNames="license_plate"
                 constraintName="fk_spot_current_car"
