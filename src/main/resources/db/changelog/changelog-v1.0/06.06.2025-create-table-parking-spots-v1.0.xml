@@ -13,21 +13,21 @@
             <column name="spot_type" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="car_license_plate" type="VARCHAR(20)"/>
-            <column name="entry_time" type="TIMESTAMP"/>
-            <column name="exit_time" type="TIMESTAMP"/>
-            <column name="duration" type="DOUBLE"/>
+            <column name="current_car_id" type="VARCHAR(20)"/>
             <column name="occupied" type="BOOLEAN" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
+            <column name="last_occupied_at" type="TIMESTAMP"/>
+            <column name="last_freed_at" type="TIMESTAMP"/>
+
         </createTable>
 
         <addForeignKeyConstraint
                 baseTableName="parking_spots"
-                baseColumnNames="car_license_plate"
+                baseColumnNames="current_car_id"
                 referencedTableName="cars"
                 referencedColumnNames="license_plate"
-                constraintName="fk_spot_car"
+                constraintName="fk_spot_current_car"
                 onDelete="SET NULL"/>
 
         <comment>Create parking_spots table with relations to cars</comment>

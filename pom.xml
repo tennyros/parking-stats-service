@@ -12,15 +12,15 @@
 
     <groupId>com.gitverse.testcakes</groupId>
     <artifactId>parking-management-service</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.1</version>
     <name>parking-management-service</name>
-    <description>Parking Management Service</description>
+    <description>Parking Management Service provides a REST API for managing a parking lot</description>
 
     <properties>
         <java.version>17</java.version>
         <lombok.version>1.18.30</lombok.version>
-        <liquibase>4.31.1</liquibase>
-        <openapi.webmvc.ui>2.8.6</openapi.webmvc.ui>
+        <liquibase.version>4.31.1</liquibase.version>
+        <openapi.webmvc.ui.version>2.8.6</openapi.webmvc.ui.version>
         <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
         <jacoco.instructions.cov>0.8</jacoco.instructions.cov>
         <jacoco.branch.cov>0.7</jacoco.branch.cov>
@@ -49,14 +49,9 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>${liquibase}</version>
+            <version>${liquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -66,7 +61,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${openapi.webmvc.ui}</version>
+            <version>${openapi.webmvc.ui.version}</version>
         </dependency>
 
         <!--    For Testing    -->
@@ -104,6 +99,15 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase.version}</version>
+                <configuration>
+                    <propertyFile>liquibase.properties</propertyFile>
+                    <changeLogFile>db.changelog-master.xml</changeLogFile>
                 </configuration>
             </plugin>
             <plugin>

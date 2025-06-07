@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### .env ###
+.env
+
+### docker-compose.yml ###
+docker-compose.yml
+
+### version.md ###
+VERSION.md

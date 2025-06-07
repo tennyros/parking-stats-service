@@ -8,7 +8,7 @@ The Parking Service provides a REST API for managing a parking lot, supporting d
 1. **Java 17+**
 2. **Docker and Docker-compose**
 
-### Setup
+### Setup via terminal
 
 **1. Clone the repository:**
 
@@ -31,7 +31,7 @@ cp docker-compose.sample.yml docker-compose.yml
 
 # Make sure the ports specified in docker-compose are not in use on your system
 # and start the build
-docker-compose up --build -d
+make up
 ```
 
 **4. After that, the API will be available at:**
@@ -55,7 +55,7 @@ http://localhost:8081/swagger-ui.html
   ```json
   {
     "licensePlate": "ABC123",
-    "entryTime": "2024-03-20T10:00:00"
+    "entryTime": "2025-06-06T10:00:00"
   }
   ```
 - **Notes**:
@@ -76,8 +76,8 @@ http://localhost:8081/swagger-ui.html
   ```json
   {
     "licensePlate": "ABC123",
-    "entryTime": "2024-03-20T10:00:00",
-    "exitTime": "2024-03-20T11:30:00",
+    "entryTime": "2025-06-06T10:00:00",
+    "exitTime": "2025-06-06T11:30:00",
     "duration": "PT1H30M"
   }
   ```

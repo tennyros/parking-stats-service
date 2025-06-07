@@ -31,7 +31,7 @@ cp docker-compose.sample.yml docker-compose.yml
 
 # Убедитесь, что порты на Вашей системе, указанные в docker-compose, не заняты
 # и запустите сборку
-docker-compose up --build -d
+docker-compose up -d
 ```
 
 **4. После этого API будет доступно по адресу:**
@@ -55,7 +55,7 @@ http://localhost:8081/swagger-ui.html
   ```json
   {
     "licensePlate": "А123БВ",
-    "entryTime": "2024-03-20T10:00:00"
+    "entryTime": "2025-06-06T10:00:00"
   }
   ```
 - **Примечания**:
@@ -76,8 +76,8 @@ http://localhost:8081/swagger-ui.html
   ```json
   {
     "licensePlate": "А123БВ",
-    "entryTime": "2024-03-20T10:00:00",
-    "exitTime": "2024-03-20T11:30:00",
+    "entryTime": "2025-06-06T10:00:00",
+    "exitTime": "2025-06-06T11:30:00",
     "duration": "PT1H30M"
   }
   ```
