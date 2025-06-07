@@ -26,18 +26,31 @@ cp .env.sample .env
 **3. Start the application and PostgreSQL using Docker:**
 
 ```bash
-# Copy the docker-compose.yml file
+# Copy the docker-compose.yml file:
 cp docker-compose.sample.yml docker-compose.yml  
 
 # Make sure the ports specified in docker-compose are not in use on your system
-# and start the build
+# and start the build:
 make up
+
+# Watch app logs:
+make logs
 ```
 
 **4. After that, the API will be available at:**
 
 ```url
 http://localhost:8081/swagger-ui.html
+```
+
+### Tests coverage
+
+```bash
+# Start tests:
+make test
+
+# Open JaCoCo coverage report in browser:
+make coverage
 ```
 
 ## API Endpoints

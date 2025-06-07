@@ -30,14 +30,27 @@ cp .env.sample .env
 cp docker-compose.sample.yml docker-compose.yml  
 
 # Убедитесь, что порты на Вашей системе, указанные в docker-compose, не заняты
-# и запустите сборку
-docker-compose up -d
+# и запустите сборку:
+make up
+
+# Просмотр логов приложения:
+make logs
 ```
 
 **4. После этого API будет доступно по адресу:**
 
 ```url
 http://localhost:8081/swagger-ui.html
+```
+
+### Покрытие тестами
+
+```bash
+# Запустить тесты:
+make test
+
+# Открыть отчет покрытия тестами JaCoCo в браузере:
+make coverage
 ```
 
 ## API Endpoints
