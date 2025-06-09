@@ -1,6 +1,6 @@
 spring:
   application:
-    name: parking-management-service
+    name: parking-stats-service
   datasource:
     driver-class-name: org.postgresql.Driver
   jpa:

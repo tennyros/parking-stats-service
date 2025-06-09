@@ -1,5 +1,7 @@
 # Руководство по использованию сервиса парковки
 
+[English documentation](README.md)
+
 ## Обзор
 Сервис парковки предоставляет REST API для управления парковкой, поддерживая различные типы транспортных средств и парковочных мест. Сервис обрабатывает операции въезда/выезда автомобилей, управление местами и формирование отчетов.
 
@@ -8,13 +10,13 @@
 1. **Java 17+**
 2. **Docker и Docker-compose**
 
-### Настройка
+### Настройка в терминале
 
 **1. Клонируйте репозиторий:**
 
 ```bash
-git clone https://gitverse.ru/test_cakes/Java-middle-new1.5-vadim_23.git
-cd Java-middle-new1.5-vadim_23
+git clone https://github.com/tennyros/parking-stats-service.git
+cd parking-stats-service
 ```
 
 **2. Скопируйте файл .env:**

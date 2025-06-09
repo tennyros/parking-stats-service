@@ -1,8 +1,8 @@
 services:
 
-  parking-management-service-db:
+  parking-stats-service-db:
     image: postgres:17.4-alpine
-    container_name: parking-management-service-db
+    container_name: parking-stats-service-db
     restart: on-failure
     environment:
       POSTGRES_DB: ${DB_NAME}
@@ -20,9 +20,9 @@ services:
       timeout: 5s
       retries: 20
 
-  parking-management-service:
-    image: parking-management-service:0.0.1
-    container_name: parking-management-service
+  parking-stats-service:
+    image: parking-stats-service:0.0.1
+    container_name: parking-stats-service
     restart: no
     build:
       context: .
@@ -39,7 +39,7 @@ services:
     networks:
       - app-net
     depends_on:
-      parking-management-service-db:
+      parking-stats-service-db:
         condition: service_healthy
 
 networks:

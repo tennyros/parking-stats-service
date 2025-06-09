@@ -1,7 +1,9 @@
-# Parking Service Usage Guide
+# Parking Stats Service Usage Guide
+
+[Документация на русском языке](README_RUS.md)
 
 ## Overview
-The Parking Service provides a REST API for managing a parking lot, supporting different types of vehicles and parking spots. The service handles car entry/exit operations, spot management, and reporting.
+The Parking Stats Service provides a REST API for managing a parking lot, supporting different types of vehicles and parking spots. The service handles car entry/exit operations, spot management, and reporting.
 
 ### Requirements
 
@@ -13,8 +15,8 @@ The Parking Service provides a REST API for managing a parking lot, supporting d
 **1. Clone the repository:**
 
 ```bash
-git clone https://gitverse.ru/test_cakes/Java-middle-new1.5-vadim_23.git
-cd Java-middle-new1.5-vadim_23
+git clone https://github.com/tennyros/parking-stats-service.git
+cd parking-stats-service
 ```
 
 **2. Copy the .env file:**
