@@ -15,7 +15,7 @@ spring:
       hibernate:
         format_sql: true
         jdbc:
-          batch_size: 1000
+          batch_size: 100
           batch_versioned_data: true
         order_inserts: true
         order_updates: true
@@ -24,4 +24,4 @@ spring:
 
 parking:
   batch:
-    size: 1000
+    size: 100

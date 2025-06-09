@@ -24,4 +24,4 @@ spring:
 
 parking:
   batch:
-    size: 1000
+    size: 100

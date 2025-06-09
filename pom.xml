@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.gitverse.testcakes</groupId>
+    <groupId>com.github.tennyros</groupId>
     <artifactId>parking-management-service</artifactId>
     <version>0.0.1</version>
     <name>parking-management-service</name>
