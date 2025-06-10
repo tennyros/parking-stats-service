@@ -1,5 +1,6 @@
 package com.github.tennyros.parkings;
 
+import com.github.tennyros.parkings.util.DotenvLoader;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ParkingApplication {
 
     public static void main(String[] args) {
+        DotenvLoader.load();
         SpringApplication.run(ParkingApplication.class, args);
     }
-
 }

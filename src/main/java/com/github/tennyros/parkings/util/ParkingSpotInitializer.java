@@ -28,7 +28,7 @@ public class ParkingSpotInitializer {
             for (int i = 1; i <= 20; i++) {
                 spots.add(createSpot(CarType.PASSENGER));
             }
-            
+
             for (int i = 1; i <= 10; i++) {
                 spots.add(createSpot(CarType.TRUCK));
             }
@@ -40,7 +40,7 @@ public class ParkingSpotInitializer {
             for (int i = 1; i <= 10; i++) {
                 spots.add(createSpot(CarType.SPECIAL));
             }
-            
+
             spotRepository.saveAll(spots);
             log.info("Initialized {} parking spots", spots.size());
         }

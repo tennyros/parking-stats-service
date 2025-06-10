@@ -3,9 +3,9 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:${DB_BASE:postgresql}://${DB_SERVER:localhost}:${DB_PORT:5433}/${DB_NAME:parking_stats_service_app}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:root}
+    url: jdbc:postgresql://${DB_HOST:}:${DB_EPORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 logging:
   level:

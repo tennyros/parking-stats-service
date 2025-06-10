@@ -2,6 +2,11 @@
 
 [English documentation](README.md)
 
+![CI Status](https://github.com/tennyros/parking-stats-service/workflows/CI%20Pipeline%20with%20Maven/badge.svg)
+![Coverage](https://github.com/tennyros/parking-stats-service/raw/coverage-badge/.github/badges/jacoco.svg)
+![Java 17](https://img.shields.io/badge/Java-17-blue)
+![Spring Boot 3.5.0](https://img.shields.io/badge/Spring_Boot-3.5.0-brightgreen)
+
 ## Обзор
 Сервис парковки предоставляет REST API для управления парковкой, поддерживая различные типы транспортных средств и парковочных мест. Сервис обрабатывает операции въезда/выезда автомобилей, управление местами и формирование отчетов.
 

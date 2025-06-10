@@ -43,3 +43,6 @@ VERSION.md
 
 ### liquibase ###
 liquibase.properties
+
+### .secrets ###
+.secrets

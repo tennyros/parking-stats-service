@@ -2,6 +2,11 @@
 
 [Документация на русском языке](README_RUS.md)
 
+![CI Status](https://github.com/tennyros/parking-stats-service/workflows/CI%20Pipeline%20with%20Maven/badge.svg)
+![Coverage](https://github.com/tennyros/parking-stats-service/raw/coverage-badge/.github/badges/jacoco.svg)
+![Java 17](https://img.shields.io/badge/Java-17-blue)
+![Spring Boot 3.5.0](https://img.shields.io/badge/Spring_Boot-3.5.0-brightgreen)
+
 ## Overview
 The Parking Stats Service provides a REST API for managing a parking lot, supporting different types of vehicles and parking spots. The service handles car entry/exit operations, spot management, and reporting.
 

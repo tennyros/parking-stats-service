@@ -21,6 +21,7 @@
         <lombok.version>1.18.30</lombok.version>
         <liquibase.version>4.31.1</liquibase.version>
         <openapi.webmvc.ui.version>2.8.6</openapi.webmvc.ui.version>
+        <java-dotenv.version>5.2.2</java-dotenv.version>
         <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
         <jacoco.instructions.cov>0.8</jacoco.instructions.cov>
         <jacoco.branch.cov>0.7</jacoco.branch.cov>
@@ -63,6 +64,11 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${openapi.webmvc.ui.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>java-dotenv</artifactId>
+            <version>${java-dotenv.version}</version>
+        </dependency>
 
         <!--    For Testing    -->
         <dependency>
@@ -101,15 +107,18 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${liquibase.version}</version>
-                <configuration>
-                    <propertyFile>liquibase.properties</propertyFile>
-                    <changeLogFile>db.changelog-master.xml</changeLogFile>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.liquibase</groupId>-->
+<!--                <artifactId>liquibase-maven-plugin</artifactId>-->
+<!--                <version>${liquibase.version}</version>-->
+<!--                <configuration>-->
+<!--                    <url>jdbc:postgresql://localhost:5435/parking_stats_service_app</url>-->
+<!--                    <username>postgres</username>-->
+<!--                    <password>root</password>-->
+<!--                    <propertyFile>liquibase.properties</propertyFile>-->
+<!--                    <changeLogFile>db.changelog-master.xml</changeLogFile>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
