@@ -44,7 +44,7 @@ jobs:
       - name: Build with Maven
         run: ./mvnw clean -B package --file pom.xml -Dspring.profiles.active=test
         env:
-          DB_HOST: ${{ secrets.POSTGRES_HOST }}
+          DB_HOST_ACT: ${{ secrets.POSTGRES_HOST }}
           DB_EPORT: ${{ secrets.POSTGRES_EPORT }}
           DB_NAME: ${{ secrets.POSTGRES_DB }}
           DB_USERNAME: ${{ secrets.POSTGRES_USER }}
