@@ -5,7 +5,7 @@ spring:
     activate:
       on-profile: test
   datasource:
-    url: jdbc:postgresql://${DB_ACT_HOST}:${DB_EPORT}/${DB_NAME}
+    url: jdbc:postgresql://${DB_HOST_ACT}:${DB_EPORT}/${DB_NAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
