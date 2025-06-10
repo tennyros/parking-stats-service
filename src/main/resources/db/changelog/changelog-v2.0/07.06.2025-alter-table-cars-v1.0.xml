@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="alter-cars-drop-entry-exit-time" author="vadim_23">
+        <dropColumn tableName="cars" columnName="entry_time"/>
+        <dropColumn tableName="cars" columnName="exit_time"/>
+
+        <comment>Remove entry_time and exit_time columns from cars table</comment>
+    </changeSet>
+
+</databaseChangeLog>

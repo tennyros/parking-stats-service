@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: parking-stats-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        id:
+          new_generator_mappings: true
+        order_inserts: true
+        order_updates: true
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
+parking:
+  batch:
+    size: 100

@@ -1,0 +1,41 @@
+package com.github.tennyros.parkings.service.impl;
+
+import com.github.tennyros.parkings.entity.ParkingTransaction;
+import com.github.tennyros.parkings.exception.CarNotFoundException;
+import com.github.tennyros.parkings.repository.ParkingTransactionRepository;
+import com.github.tennyros.parkings.service.ParkingExitService;
+import com.github.tennyros.parkings.service.ParkingSpotService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+/**
+ * Implementation of the ParkingExitService interface.
+ *
+ * @see ParkingExitService
+ */
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class ParkingExitServiceImpl implements ParkingExitService {
+
+    private final ParkingTransactionRepository transactionRepository;
+    private final ParkingSpotService spotService;
+
+    @Override
+    @Transactional
+    public ParkingTransaction processExit(String licensePlate) {
+        ParkingTransaction transaction = transactionRepository.findActiveTransaction(licensePlate)
+                .orElseThrow(() -> new CarNotFoundException(
+                        String.format("No active parking session found for car %s", licensePlate)));
+
+        LocalDateTime exitTime = LocalDateTime.now();
+        transaction.setExitTime(exitTime);
+        spotService.freeSpot(transaction.getSpot().getId());
+        log.debug("Car {} exited from spot {}", licensePlate, transaction.getSpot().getId());
+        return transactionRepository.save(transaction);
+    }
+}

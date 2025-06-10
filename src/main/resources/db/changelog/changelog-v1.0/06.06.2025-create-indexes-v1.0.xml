@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="add-indexes" author="vadim_23">
+        <createIndex tableName="parking_transactions"
+                    indexName="idx_parking_transactions_car_exit_time">
+            <column name="car_id"/>
+            <column name="exit_time"/>
+        </createIndex>
+
+        <createIndex tableName="parking_spots"
+                    indexName="idx_parking_spots_type_occupied">
+            <column name="spot_type"/>
+            <column name="occupied"/>
+        </createIndex>
+
+        <comment>Add indexes for parking transactions to optimize active parking check and
+            for parking spots to optimize free spot search</comment>
+    </changeSet>
+
+</databaseChangeLog> 
