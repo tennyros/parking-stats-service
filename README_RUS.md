@@ -19,18 +19,18 @@ git clone https://github.com/tennyros/parking-stats-service.git
 cd parking-stats-service
 ```
 
-**2. Скопируйте файл .env:**
+**2. Подготовьте файлы репозитория:**
 
 ```bash
+# Переименуйте .sample файлы
 cp .env.sample .env
+cp docker-compose.sample.yml docker-compose.yml
+cp liquibase.properties.sample liquibase.properties
 ```
 
 **3. Запустите приложение и PostgreSQL через Docker:**
 
 ```bash
-# Скопируйте docker-compose.yml файл
-cp docker-compose.sample.yml docker-compose.yml  
-
 # Убедитесь, что порты на Вашей системе, указанные в docker-compose, не заняты
 # и запустите сборку:
 make up

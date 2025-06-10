@@ -67,11 +67,11 @@ class ParkingControllerTest {
     class CarEntryTests {
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should register car entry successfully")
         void registerEntry_ValidRequest_ReturnsOk(String baseUrl) throws Exception {
-            CarEntryRequest request = buildValidEntryRequest();
-            ParkingTransaction transaction = buildTestTransaction();
+            var request = buildValidEntryRequest();
+            var transaction = buildTestTransaction();
 
             when(entryService.registerEntry(any())).thenReturn(transaction);
 
@@ -84,10 +84,10 @@ class ParkingControllerTest {
         }
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should return bad request for invalid entry request")
         void registerEntry_InvalidRequest_ReturnsBadRequest(String baseUrl) throws Exception {
-            CarEntryRequest request = new CarEntryRequest("", null);
+            var request = new CarEntryRequest("", null);
 
             mockMvc.perform(post(baseUrl + "/entry")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -96,10 +96,10 @@ class ParkingControllerTest {
         }
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should return conflict when car is already parked")
         void registerEntry_CarAlreadyParked_ReturnsConflict(String baseUrl) throws Exception {
-            CarEntryRequest request = buildValidEntryRequest();
+            var request = buildValidEntryRequest();
 
             when(entryService.registerEntry(any()))
                     .thenThrow(new CarAlreadyParkedException("Car already parked"));
@@ -111,10 +111,10 @@ class ParkingControllerTest {
         }
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should return conflict when no spots available")
         void registerEntry_NoAvailableSpots_ReturnsConflict(String baseUrl) throws Exception {
-            CarEntryRequest request = buildValidEntryRequest();
+            var request = buildValidEntryRequest();
 
             when(entryService.registerEntry(any()))
                     .thenThrow(new NoAvailableSpotsException("No available spots"));
@@ -131,11 +131,11 @@ class ParkingControllerTest {
     class CarExitTests {
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should register car exit successfully")
         void registerExit_ValidRequest_ReturnsOk(String baseUrl) throws Exception {
-            CarExitRequest request = buildValidExitRequest();
-            ParkingTransaction transaction = buildTestTransaction();
+            var request = buildValidExitRequest();
+            var transaction = buildTestTransaction();
             transaction.setExitTime(NOW.plusHours(2));
 
             when(exitService.processExit(any())).thenReturn(transaction);
@@ -150,10 +150,10 @@ class ParkingControllerTest {
         }
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should return bad request for invalid exit request")
         void registerExit_InvalidRequest_ReturnsBadRequest(String baseUrl) throws Exception {
-            CarExitRequest request = new CarExitRequest("");
+            var request = new CarExitRequest("");
 
             mockMvc.perform(post(baseUrl + "/exit")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -162,10 +162,10 @@ class ParkingControllerTest {
         }
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should return not found when car not found")
         void registerExit_CarNotFound_ReturnsNotFound(String baseUrl) throws Exception {
-            CarExitRequest request = buildValidExitRequest();
+            var request = buildValidExitRequest();
 
             when(exitService.processExit(any()))
                     .thenThrow(new CarNotFoundException("Car not found"));
@@ -182,10 +182,10 @@ class ParkingControllerTest {
     class ReportTests {
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should generate report successfully")
         void generateReport_ValidRequest_ReturnsOk(String baseUrl) throws Exception {
-            ParkingReport report = buildValidParkingReport();
+            var report = buildValidParkingReport();
 
             when(reportService.generateReport(any(), any())).thenReturn(report);
 
@@ -200,7 +200,7 @@ class ParkingControllerTest {
         }
 
         @ParameterizedTest
-        @MethodSource("com.gitverse.testcakes.parkings.controller.ParkingControllerTest#provideApiVersions")
+        @MethodSource("com.github.tennyros.parkings.controller.ParkingControllerTest#provideApiVersions")
         @DisplayName("Should return internal server error for invalid date range")
         void generateReport_InvalidDateRange_ReturnsInternalServerError(String baseUrl) throws Exception {
             mockMvc.perform(get(baseUrl + "/report")

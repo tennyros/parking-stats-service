@@ -52,7 +52,7 @@ class ParkingExitServiceImplTest {
         when(transactionRepository.save(any(ParkingTransaction.class)))
                 .thenReturn(testTransaction);
 
-        ParkingTransaction result = exitService.processExit(TEST_LICENSE_PLATE);
+        var result = exitService.processExit(TEST_LICENSE_PLATE);
 
         assertNotNull(result);
         assertNotNull(result.getExitTime());

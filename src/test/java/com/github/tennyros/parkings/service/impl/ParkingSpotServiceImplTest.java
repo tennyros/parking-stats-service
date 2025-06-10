@@ -49,7 +49,7 @@ class ParkingSpotServiceImplTest {
                 .thenReturn(Optional.of(testSpot));
         when(spotRepository.save(any(ParkingSpot.class))).thenReturn(testSpot);
 
-        ParkingSpot result = spotService.occupySpot(testCar);
+        var result = spotService.occupySpot(testCar);
 
         assertNotNull(result);
         assertTrue(result.isOccupied());

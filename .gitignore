@@ -40,3 +40,6 @@ docker-compose.yml
 
 ### version.md ###
 VERSION.md
+
+### liquibase ###
+liquibase.properties

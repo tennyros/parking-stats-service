@@ -60,13 +60,13 @@ class ReportingServiceImplTest {
         @Test
         @DisplayName("Should generate report for single batch of transactions")
         void generateReport_SingleBatch() {
-            List<ParkingTransaction> transactions = createTestTransactions();
+            var transactions = createTestTransactions();
             when(transactionRepository.findAllByEntryTimeBetweenWithPagination(
                     any(), any(), any(PageRequest.class)))
                     .thenReturn(transactions)
                     .thenReturn(List.of());
 
-            ParkingReport report = reportingService.generateReport(TEST_ENTRY_TIME, TEST_EXIT_TIME);
+            var report = reportingService.generateReport(TEST_ENTRY_TIME, TEST_EXIT_TIME);
 
             assertNotNull(report);
             assertEquals(4, report.totalEntries());
@@ -85,7 +85,7 @@ class ReportingServiceImplTest {
                     any(), any(), any(PageRequest.class)))
                     .thenReturn(List.of());
 
-            ParkingReport report = reportingService.generateReport(TEST_ENTRY_TIME, TEST_EXIT_TIME);
+            var report = reportingService.generateReport(TEST_ENTRY_TIME, TEST_EXIT_TIME);
 
             assertNotNull(report);
             assertEquals(0, report.totalEntries());
@@ -110,8 +110,8 @@ class ReportingServiceImplTest {
         @Test
         @DisplayName("Should process multiple batches correctly")
         void generateReport_MultipleBatches() {
-            List<ParkingTransaction> firstBatch = createTestTransactions();
-            List<ParkingTransaction> secondBatch = createTestTransactions();
+            var firstBatch = createTestTransactions();
+            var secondBatch = createTestTransactions();
             
             when(transactionRepository.findAllByEntryTimeBetweenWithPagination(
                     any(), any(), any(PageRequest.class)))
@@ -119,7 +119,7 @@ class ReportingServiceImplTest {
                     .thenReturn(secondBatch)
                     .thenReturn(List.of());
 
-            ParkingReport report = reportingService.generateReport(TEST_ENTRY_TIME, TEST_EXIT_TIME);
+            var report = reportingService.generateReport(TEST_ENTRY_TIME, TEST_EXIT_TIME);
 
             assertNotNull(report);
             assertEquals(8, report.totalEntries());
@@ -129,19 +129,18 @@ class ReportingServiceImplTest {
         @Test
         @DisplayName("Should handle mixed completed and active transactions")
         void generateReport_MixedTransactions() {
-            // Given
-            Car activeCar = buildTestCar("E345JK", CarType.PASSENGER);
-            Car completedCar = buildTestCar("F678LM", CarType.PASSENGER);
+            var activeCar = buildTestCar("E345JK", CarType.PASSENGER);
+            var completedCar = buildTestCar("F678LM", CarType.PASSENGER);
             
-            ParkingSpot activeSpot = buildTestSpot(5L, CarType.PASSENGER, false);
-            ParkingSpot completedSpot = buildTestSpot(6L, CarType.PASSENGER, false);
+            var activeSpot = buildTestSpot(5L, CarType.PASSENGER, false);
+            var completedSpot = buildTestSpot(6L, CarType.PASSENGER, false);
 
-            ParkingTransaction activeTransaction = buildTestTransaction(
+            var activeTransaction = buildTestTransaction(
                 activeCar, activeSpot, TEST_ENTRY_TIME, null);
-            ParkingTransaction completedTransaction = buildTestTransaction(
+            var completedTransaction = buildTestTransaction(
                 completedCar, completedSpot, TEST_ENTRY_TIME, TEST_EXIT_TIME);
 
-            List<ParkingTransaction> transactions = Arrays.asList(
+            var transactions = Arrays.asList(
                 activeTransaction,
                 completedTransaction
             );
@@ -151,7 +150,7 @@ class ReportingServiceImplTest {
                     .thenReturn(transactions)
                     .thenReturn(List.of());
 
-            ParkingReport report = reportingService.generateReport(TEST_ENTRY_TIME, TEST_EXIT_TIME);
+            var report = reportingService.generateReport(TEST_ENTRY_TIME, TEST_EXIT_TIME);
 
             assertNotNull(report);
             assertEquals(2, report.totalEntries());
@@ -162,15 +161,15 @@ class ReportingServiceImplTest {
     }
 
     private List<ParkingTransaction> createTestTransactions() {
-        Car passengerCar = buildTestCar("A123BC", CarType.PASSENGER);
-        Car truckCar = buildTestCar("B456DE", CarType.TRUCK);
-        Car motorcycleCar = buildTestCar("C789FG", CarType.MOTORCYCLE);
-        Car specialCar = buildTestCar("D012HI", CarType.SPECIAL);
+        var passengerCar = buildTestCar("A123BC", CarType.PASSENGER);
+        var truckCar = buildTestCar("B456DE", CarType.TRUCK);
+        var motorcycleCar = buildTestCar("C789FG", CarType.MOTORCYCLE);
+        var specialCar = buildTestCar("D012HI", CarType.SPECIAL);
 
-        ParkingSpot passengerSpot = buildTestSpot(1L, CarType.PASSENGER, false);
-        ParkingSpot truckSpot = buildTestSpot(2L, CarType.TRUCK, false);
-        ParkingSpot motorcycleSpot = buildTestSpot(3L, CarType.MOTORCYCLE, false);
-        ParkingSpot specialSpot = buildTestSpot(4L, CarType.SPECIAL, false);
+        var passengerSpot = buildTestSpot(1L, CarType.PASSENGER, false);
+        var truckSpot = buildTestSpot(2L, CarType.TRUCK, false);
+        var motorcycleSpot = buildTestSpot(3L, CarType.MOTORCYCLE, false);
+        var specialSpot = buildTestSpot(4L, CarType.SPECIAL, false);
 
         return Arrays.asList(
             buildTestTransaction(passengerCar, passengerSpot, TEST_ENTRY_TIME, TEST_EXIT_TIME),

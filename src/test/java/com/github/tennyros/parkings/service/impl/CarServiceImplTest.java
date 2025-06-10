@@ -46,7 +46,7 @@ class CarServiceImplTest {
         when(carRepository.findById(TEST_LICENSE_PLATE))
                 .thenReturn(Optional.of(testCar));
 
-        Car result = carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
+        var result = carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
 
         assertNotNull(result);
         assertEquals(TEST_LICENSE_PLATE, result.getLicensePlate());
@@ -60,7 +60,7 @@ class CarServiceImplTest {
                 .thenReturn(Optional.empty());
         when(carRepository.save(any(Car.class))).thenReturn(testCar);
 
-        Car result = carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
+        var result = carService.findOrRegisterCar(TEST_LICENSE_PLATE, TEST_CAR_TYPE);
 
         assertNotNull(result);
         assertEquals(TEST_LICENSE_PLATE, result.getLicensePlate());

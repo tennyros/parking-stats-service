@@ -65,7 +65,7 @@ class ParkingEntryServiceImplTest {
         when(transactionRepository.save(any(ParkingTransaction.class))).thenReturn(testTransaction);
         when(transactionRepository.existsByCarAndExitTimeIsNull(testCar)).thenReturn(false);
 
-        ParkingTransaction result = entryService.registerEntry(testRequest);
+        var result = entryService.registerEntry(testRequest);
 
         assertNotNull(result);
         assertEquals(testCar, result.getCar());
@@ -111,7 +111,7 @@ class ParkingEntryServiceImplTest {
         when(spotService.occupySpot(testCar)).thenReturn(testSpot);
         when(transactionRepository.save(any(ParkingTransaction.class))).thenReturn(testTransaction);
 
-        ParkingTransaction result = entryService.registerEntry(testRequest);
+        var result = entryService.registerEntry(testRequest);
 
         assertNotNull(result);
         assertEquals(testCar, result.getCar());
